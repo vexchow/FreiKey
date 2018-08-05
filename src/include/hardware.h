@@ -13,6 +13,7 @@ constexpr char* MODEL = "FreiKeyboard";
 constexpr char* BT_NAME = "FreiKeys";
 constexpr char* HW_REV = "0001";
 constexpr char* LHS_NAME = "FreiKeys-Slave";
+constexpr char* UART_NAME = "FreiKey-Display";
 
 namespace state {
 

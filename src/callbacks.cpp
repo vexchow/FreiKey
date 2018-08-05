@@ -33,6 +33,7 @@ void core_disconnect(uint16_t handle, uint8_t reason) {
 }
 
 // Called with we find a UART host to connect with
+// We have to figure out which one we're talking to
 void cent_connect(uint16_t conn_handle) {
   // TODO: Maybe make this more secure? I haven't looked into how secure this
   // is in the documentation :/
@@ -40,11 +41,17 @@ void cent_connect(uint16_t conn_handle) {
   Bluefruit.Gap.getPeerName(conn_handle, peer_name, sizeof(peer_name));
   // I ought to at least make sure the peer_name is LHS_NAME, right?
   if (!strcmp(LHS_NAME, peer_name) && clientUart.discover(conn_handle)) {
-    DBG(Serial.print("[Cent] Connected to "));
+    DBG(Serial.print("[Cent] Connected to left hand: "));
     DBG(Serial.println(peer_name));
     DBG(Bluefruit.printInfo());
     // Enable TXD's notify
     clientUart.enableTXD();
+  } else if (!strcmp(UART_NAME, peer_name) && displayUart.discover(conn_handler)) {
+    DBG(Serial.print("[Cent] Connected to display: "));
+    DBG(Serial.println(peer_name));
+    DBG(Bluefruit.printInfo());
+    // Enable TXD's notify
+    displayUart.enableTXD();
   } else {
     DBG(Serial.println("[Cent] Not connecting to the other side: wrong name"));
     DBG(Serial.print("Was expecting: "));
