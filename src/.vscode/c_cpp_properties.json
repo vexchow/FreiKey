@@ -35,6 +35,7 @@
         "${workspaceRoot}/../../Adafruit_nRF52_Arduino/variants/feather52",
         "${workspaceRoot}/../../Adafruit_nRF52_Arduino/libraries/Bluefruit52Lib/src",
         "${workspaceRoot}/../../Adafruit_nRF52_Arduino/libraries/nffs/src",
+        "${workspaceRoot}/../../Adafruit_nRF52_Arduino/libraries/SPI",
         "${workspaceRoot}/../../Adafruit_SSD1306",
         "${workspaceRoot}/../../Adafruit-GFX-Library"
       ],
@@ -118,7 +119,8 @@
         "${workspaceRoot}/../../Adafruit_nRF52_Arduino/cores/nRF5",
         "${workspaceRoot}/../../Adafruit_nRF52_Arduino/variants/feather52",
         "${workspaceRoot}/../../Adafruit_nRF52_Arduino/libraries/Bluefruit52Lib/src",
-        "${workspaceRoot}/../../Adafruit_nRF52_Arduino/libraries/nffs/src"
+        "${workspaceRoot}/../../Adafruit_nRF52_Arduino/libraries/nffs/src",
+        "${workspaceRoot}/../../Adafruit_nRF52_Arduino/libraries/SPI"
       ],
       "defines": [
         "DEBUG",
