@@ -69,10 +69,11 @@ OPT=-Os
 
 SHARED_SRC = dbgcfg.cpp hardware.cpp led_states.cpp boardio.cpp debounce.cpp \
 	sleepstate.cpp
-RIGHT_SRC = status_dump.cpp globals.cpp right-master.cpp callbacks.cpp \
-	scanner.cpp
-LEFT_SRC = left-slave.cpp
-DISP_SRC = display.cpp disp_uart.cpp
+RIGHT_SRC = keyboard-right.cpp
+LEFT_SRC = keyboard-left.cpp
+DISP_SRC = display.cpp disp_uart.cpps tatus_dump.cpp globals.cpp right-master.cpp \
+	callbacks.cpp scanner.cpp
+
 USER_SRC = ${SHARED_SRC} ${RIGHT_SRC} ${LEFT_SRC} ${DISP_SRC}
 
 INCLUDES=-Iinclude \
@@ -312,18 +313,18 @@ DEPS = $(CORE_OBJS:.o=.d) $(NFFS_OBJS:.o=.d) $(BFLIB_OBJS:.o=.d) $(USER_OBJS:.o=
 
 -include ${DEPS}
 
-flashl: ${OUT}/left-slave.zip
+flashl: ${OUT}/kb-left.zip
 	${NRFUTIL} --verbose dfu serial -pkg $< -p ${LPORT} -b 115200
 
-flashr: ${OUT}/right-master.zip
+flashr: ${OUT}/kb-right.zip
 	${NRFUTIL} --verbose dfu serial -pkg $< -p ${RPORT} -b 115200
 
 flashd: ${OUT}/display.zip
 	${NRFUTIL} --verbose dfu serial -pkg $< -p ${DPORT} -b 115200
 
-left: ${OUT}/left-slave.zip
+left: ${OUT}/kb-left.zip
 
-right: ${OUT}/right-master.zip
+right: ${OUT}/kb-right.zip
 
 display: ${OUT}/display.zip
 
@@ -336,17 +337,17 @@ ${OUT}/%.zip : ${OUT}/%.hex
 ${OUT}/%.hex : ${OUT}/%.elf
 	${OBJCOPY} -O ihex $< $@
 
-${OUT}/left-slave.elf : ${ALL_LIBS}
+${OUT}/kb-left.elf : ${ALL_LIBS}
 
-${OUT}/right-master.elf : ${ALL_LIBS}
+${OUT}/kb-right.elf : ${ALL_LIBS}
 
 ${OUT}/display.elf: ${ALL_LIBS}
 
-${OUT}/left-slave.elf : ${LEFT_OBJS} ${SHARED_OBJS}
+${OUT}/kb-left.elf : ${LEFT_OBJS} ${SHARED_OBJS}
 	${CC} ${ELF_FLAGS} "-Wl,-Map,$@.map" -o $@ $^ \
 	-Wl,--start-group -lm ${ALL_LIBS} -Wl,--end-group
 
-${OUT}/right-master.elf : ${RIGHT_OBJS} ${SHARED_OBJS}
+${OUT}/kb-right.elf : ${RIGHT_OBJS} ${SHARED_OBJS}
 	${CC} ${ELF_FLAGS} "-Wl,-Map,$@.map" -o $@ $^ \
 	-Wl,--start-group -lm ${ALL_LIBS} -Wl,--end-group
 
