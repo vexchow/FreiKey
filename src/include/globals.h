@@ -9,6 +9,7 @@
 extern BLEDis dis;
 extern BLEHidAdafruit hid;
 extern BLEClientUart clientUart;
+extern BLEClientUart displayUart;
 extern BLEBas battery;
 
 extern state::hw leftSide;

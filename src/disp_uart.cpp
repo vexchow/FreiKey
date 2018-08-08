@@ -21,8 +21,8 @@ namespace disp_uart {
 
 uint8_t encodeBatteryValue(uint8_t chargeRemaining,
                            bool isCharging,
-                           bool isPresent) {
-  return isPresent ? 0xFF : (chargeRemaining + (isCharging ? 100 : 0));
+                           bool isAbsent) {
+  return isAbsent ? 0xFF : (chargeRemaining + (isCharging ? 100 : 0));
 }
 
 void drawBattery(uint8_t rate, uint8_t x, uint8_t y) {
@@ -34,7 +34,7 @@ void drawBattery(uint8_t rate, uint8_t x, uint8_t y) {
   if (!error) {
     display.fillRect(x + 2, y + 2, 26 * rate / 100, 14, WHITE);
     if (charge) {
-      for (uint32_t i = 0; i < 4; i++) {
+      for (uint8_t i = 0; i < 4; i++) {
         display.drawFastHLine(x + 15 - i * 3, y + i + 4, i * 3 + 2, INVERSE);
         display.drawFastHLine(x + 14, y - i + 12, i * 3 + 2, INVERSE);
       }
@@ -59,6 +59,7 @@ void drawWin(uint8_t x, uint8_t y) {
 }
 
 constexpr uint8_t apple[] = {
+    16,   21, // Width, Height
     0x00, 0x10, // ---- ---- ---X ----
     0x00, 0x30, // ---- ---- --XX ----
     0x00, 0x70, // ---- ---- -XXX ----
@@ -83,6 +84,7 @@ constexpr uint8_t apple[] = {
 };
 
 constexpr uint8_t linux[] = {
+    21,   21, // Width, Height
     0x00, 0x00, 0xE0, // ---- ---- ---- ---- XXX- -|||
     0x00, 0x01, 0xF0, // ---- ---- ---- ---X XXXX -|||
     0x00, 0x1D, 0xF0, // ---- ---- ---X XX-X XXXX -|||
@@ -107,6 +109,7 @@ constexpr uint8_t linux[] = {
 };
 
 constexpr uint8_t func[] = {
+    16,   21, // Width, Height
     0x0C, 0x00, // ---- XX-- ---- ----
     0x1C, 0x00, // ---X XX-- ---- ----
     0x38, 0x00, // --XX X--- ---- ----
@@ -127,39 +130,48 @@ constexpr uint8_t func[] = {
     0x31, 0x83, // --XX ---X X--- --XX
     0x31, 0x83, // --XX ---X X--- --XX
     0x31, 0x83, // --XX ---X X--- --XX
-    0x31, 0x83, // --XX ---X X--- --XX
+    0x31, 0x83 //  --XX ---X X--- --XX
 };
 
 constexpr uint8_t blueicon[] = {
-    0x06, 0x00, // ---- -xx- ---
-    0x07, 0x00, // ---- -xxx ---
-    0x07, 0x80, // ---- -xxx x--
-    0x06, 0xC0, // ---- -xx- xx-
-    0xC6, 0x60, // -xx- -xx- -xx
-    0x36, 0xC0, // --xx -xx- xx-
-    0x1F, 0x80, // ---x xxxx x--
-    0x0F, 0x00, // ---- xxxx ---
-    0x1F, 0x80, // ---x xxxx x--
-    0x36, 0xC0, // --xx -xx- xx-
-    0xC6, 0x60, // -xx- -xx- -xx
-    0x06, 0xC0, // ---- -xx- xx-
-    0x07, 0x80, // ---- -xxx x--
-    0x07, 0x00, // ---- -xxx ---
-    0x06, 0x00  // ---- -xx- ---
+    10,   15, // Width, Height
+    0x0C, 0x00, // ---- xx-- --||
+    0x0E, 0x00, // ---- xxx- --||
+    0x0F, 0x00, // ---- xxxx --||
+    0x0D, 0x80, // ---- xx-x x-||
+    0xCC, 0xC0, // xx-- xx-- xx||
+    0x6D, 0x80, // -xx- xx-x x-||
+    0x3F, 0x00, // --xx xxxx --||
+    0x1E, 0x00, // ---x xxx- --||
+    0x3F, 0x80, // --xx xxxx --||
+    0x6D, 0x80, // -xx- xx-x x-||
+    0xCC, 0xC0, // xx-- xx-- xx||
+    0x0D, 0x80, // ---- xx-x x-||
+    0x0F, 0x00, // ---- xxxx --||
+    0x0E, 0x00, // ---- xxx- --||
+    0x0C, 0x00 //  ---- xx-- --||
 };
 struct layer {
-  union {
-    void (*render)(uint8_t x, uint8_t y);
-    const uint8_t* buffer;
-  };
-  uint8_t w, h, xo, yo;
+  void (*render)(uint8_t x, uint8_t y);
+  const uint8_t* buffer;
+  uint8_t w, h;
+  uint8_t xo, yo;
 
-  layer(void (*r)(uint8_t x, uint8_t o))
-      : render(r), w(0), h(0), xo(0), yo(0) {}
-  layer(const uint8_t* buf, uint8_t w, uint8_t h, uint8_t xo = 0, uint8_t yo = 0)
-      : buffer(buf), w(w), h(h), xo(xo), yo(yo) {}
+  layer(void (*r)(uint8_t x, uint8_t y),
+        uint8_t wx,
+        uint8_t hy,
+        uint8_t xo = 0,
+        uint8_t yo = 0)
+      : render(r), buffer(nullptr), w(wx), h(hy), xo(xo), yo(yo) {}
+  layer(const uint8_t* buf, uint8_t xo = 0, uint8_t yo = 0)
+      : render(nullptr),
+        buffer(buf + 2),
+        w(*buf),
+        h(*(buf + 1)),
+        xo(xo),
+        yo(yo) {}
   void draw(uint8_t x, uint8_t y) {
-    if (w) {
+    if (buffer) {
       display.drawBitmap(x + xo, y + yo, buffer, w, h, WHITE, BLACK);
     } else {
       render(x, y);
@@ -167,11 +179,11 @@ struct layer {
   }
 };
 
-layer layers[] = {layer(&apple[0], 16, 21, 1),
-                  layer(drawWin),
-                  layer(&linux[0], 21, 21),
-                  layer(&func[0], 16, 21),
-                  layer(&blueicon[0], 11, 15)};
+layer layers[] = {layer(&apple[0], 1),
+                  layer(drawWin, 17, 21),
+                  layer(&linux[0]),
+                  layer(&func[0]),
+                  layer(&blueicon[0])};
 
 void drawLayer(uint8_t lyr, uint8_t x, uint8_t y) {
   layers[lyr].draw(x, y);

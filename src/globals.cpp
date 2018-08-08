@@ -6,6 +6,7 @@
 BLEDis dis;
 BLEHidAdafruit hid;
 BLEClientUart clientUart;
+BLEClientUart displayUart;
 BLEBas battery;
 uint16_t core_handle = 0xFFFF;
 SleepState sleepState = {0, false, true};

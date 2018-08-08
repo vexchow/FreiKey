@@ -46,7 +46,7 @@ void cent_connect(uint16_t conn_handle) {
     DBG(Bluefruit.printInfo());
     // Enable TXD's notify
     clientUart.enableTXD();
-  } else if (!strcmp(UART_NAME, peer_name) && displayUart.discover(conn_handler)) {
+  } else if (!strcmp(UART_NAME, peer_name) && displayUart.discover(conn_handle)) {
     DBG(Serial.print("[Cent] Connected to display: "));
     DBG(Serial.println(peer_name));
     DBG(Bluefruit.printInfo());
@@ -74,6 +74,7 @@ void cent_disconnect(uint16_t conn_handle, uint8_t reason) {
 
 // Called when the system detects someone looking for a client
 void scan(ble_gap_evt_adv_report_t* report) {
+  DBG(Serial.println("callback::scan(...)"));
   // Check if advertising contain BleUart service
   if (Bluefruit.Scanner.checkReportForService(report, clientUart)) {
     // Connect to device with bleuart service in advertising
