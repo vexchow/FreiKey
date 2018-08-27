@@ -68,7 +68,7 @@ SLANG=-x assembler-with-cpp
 OPT=-Os
 
 SHARED_SRC = dbgcfg.cpp hardware.cpp led_states.cpp boardio.cpp debounce.cpp \
-	sleepstate.cpp
+	sleepstate.cpp battery.cpp
 RIGHT_SRC = keyboard-right.cpp
 LEFT_SRC = keyboard-left.cpp
 DISP_SRC = display.cpp disp_uart.cpps tatus_dump.cpp globals.cpp right-master.cpp \
