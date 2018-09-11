@@ -1,4 +1,5 @@
 #include "led_states.h"
+#include "switch_matrix.h"
 
 namespace state {
 
@@ -22,7 +23,10 @@ uint32_t winMode(const state::hw& sw, uint32_t time_offset) {
 
 constexpr led key_states[] = {
     // These are the lower & outer 3 keys to get the battery status
-    {0x10408000000ULL, 0x1010200000ULL, batteryFlasher, 1000}};
+    {switch_matrix{0x10408000000ULL},
+     switch_matrix{0x1010200000ULL},
+     batteryFlasher,
+     1000}};
 
 const led* led::get(const state::hw& sw, uint8_t layer) {
   for (auto& st : key_states) {
@@ -33,4 +37,4 @@ const led* led::get(const state::hw& sw, uint8_t layer) {
   return nullptr;
 }
 
-}
+} // namespace state

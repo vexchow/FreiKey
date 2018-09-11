@@ -1,21 +1,26 @@
 #if !defined(SOFTWARE_H)
 #define SOFTWARE_H
 
-namespace state {
-  class kb {
-    // Active layer
-    // Current 'down' keys?
+#include "switch_matrix.h"
 
-    // Operations:
-    // Not sure the right return type yet
-    // Possible results:
-    //  A HID keyreport (mods + keys)
-    //  A consumer key press
-    //  An "LED state" change
-    //  An *internal only* state change (i.e. nothing)
-    //  A list of most everything above
-    void resolveChanges(uint64_t beforeLeft, uint64_t afterleft, uint64_t beforeRight, uint64_t afterRight);
-  }
+namespace state {
+class kb {
+  // Active layer
+  // Current 'down' keys?
+
+  // Operations:
+  // Not sure the right return type yet
+  // Possible results:
+  //  A HID keyreport (mods + keys)
+  //  A consumer key press
+  //  An "LED state" change
+  //  An *internal only* state change (i.e. nothing)
+  //  A list of most everything above
+  void resolveChanges(const switch_matrix& beforeLeft,
+                      const switch_matrix& afterleft,
+                      const switch_matrix& beforeRight,
+                      const switch_matrix& afterRight);
 }
+} // namespace state
 
 #endif

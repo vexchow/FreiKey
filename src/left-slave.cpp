@@ -5,6 +5,7 @@
 #include "hardware.h"
 #include "led_states.h"
 #include "sleepstate.h"
+#include "switch_matrix.h"
 
 BLEDis bledis;
 BLEUart bleuart;
@@ -39,7 +40,7 @@ void setup() {
   // Start Advertising the UART service to talk to the other half...
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
-  //Bluefruit.Advertising.addAppearance(BLE_APPEARANCE_HID_KEYBOARD);
+  // Bluefruit.Advertising.addAppearance(BLE_APPEARANCE_HID_KEYBOARD);
   Bluefruit.Advertising.addService(bleuart);
   Bluefruit.ScanResponse.addName();
   Bluefruit.Advertising.restartOnDisconnect(true);
@@ -61,7 +62,7 @@ void loop() {
   uint32_t now = millis();
   state::hw down{now, lastRead, LeftBoard};
 
-  if (sleepState.CheckForSleeping(down.switches, now, LeftBoard)) {
+  if (sleepState.CheckForSleeping(down.switches.any(), now, LeftBoard)) {
     // I'm assuming this saves power. If it doesn't, there's no point...
     delay(250);
     waitForEvent();
