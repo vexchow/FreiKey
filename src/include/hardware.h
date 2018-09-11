@@ -19,7 +19,7 @@ namespace state {
 // This struct is to encapsulate the complete hardware state, including both
 // which switches are down, as well as the current battery level.
 struct hw {
-  uint64_t switches;
+  switch_matrix switches;
   uint8_t battery_level;
 
   // This is just a dump constructor

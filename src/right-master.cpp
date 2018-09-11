@@ -12,6 +12,7 @@
 #include "scanner.h"
 #include "sleepstate.h"
 #include "status_dump.h"
+#include "switch_matrix.h"
 
 // I'm going to update this to keep track of additional state.
 // Each key 'previously' pressed should have a 'time last pressed'
@@ -101,11 +102,9 @@ action_t resolveActionForScanCodeOnActiveLayer(uint8_t scanCode) {
 
 // Given a delta mask, get the scan code, update the delta mask and set pressed
 // while we're at it.
-scancode_t getNextScanCode(uint64_t& delta, uint64_t curState, bool& pressed) {
-  scancode_t sc = flsl(delta);
-  uint64_t mask = ((uint64_t)1) << sc;
-  pressed = curState & mask;
-  delta ^= mask;
+scancode_t getNextScanCode(switch_matrix& delta, switch_matrix &curState, bool& pressed) {
+  scancode_t sc = delta.pull_a_bit();
+  pressed = curState.get_bit(sc);
   return sc;
 }
 
@@ -198,7 +197,7 @@ void loop() {
   state::hw downLeft{clientUart, leftSide};
 
   // For sleeping, look at both sides of the keyboard
-  uint64_t down = downRight.switches | downLeft.switches;
+  bool down = downRight.switches.any() || downLeft.switches.any();
   if (sleepState.CheckForSleeping(down, now, RightBoard)) {
     // I'm assuming this saves power. If it doesn't, there's no point...
     delay(250);
@@ -210,8 +209,10 @@ void loop() {
   updateBatteryLevel(downLeft, downRight);
 
   // Get the before & after of each side into a 64 bit value
-  uint64_t beforeLeft = leftSide.switches, afterLeft = downLeft.switches;
-  uint64_t beforeRight = rightSide.switches, afterRight = downRight.switches;
+  switch_matrix beforeLeft = leftSide.switches;
+  switch_matrix afterLeft = downLeft.switches;
+  switch_matrix beforeRight = rightSide.switches;
+  switch_matrix afterRight = downRight.switches;
 
   // Pseudo-code for what I'm looking to clean up:
 #if 0
@@ -219,10 +220,10 @@ void loop() {
       beforeLeft, afterLeft, beforeRight, afterRight);
   PerformActionsForScanCodes(scanCodes);
 #endif
-  uint64_t deltaLeft = beforeLeft ^ afterLeft;
-  uint64_t deltaRight = beforeRight ^ afterRight;
-  bool keysChanged = deltaLeft || deltaRight;
-  if (deltaRight && !curState) {
+  switch_matrix deltaLeft = beforeLeft.delta(afterLeft);
+  switch_matrix deltaRight = beforeRight.delta(afterRight);
+  bool keysChanged = deltaLeft.any() || deltaRight.any();
+  if (deltaRight.any() && !curState) {
     // if we're not already in a state, check to see if we're transitioning
     // into one
     curState = state::led::get(downRight, layer_pos + 1);
@@ -241,10 +242,10 @@ void loop() {
     }
   }
 
-  while (deltaLeft || deltaRight) {
+  while (deltaLeft.any() || deltaRight.any()) {
     scancode_t sc;
     bool pressed;
-    if (deltaLeft) {
+    if (deltaLeft.any()) {
       sc = getNextScanCode(deltaLeft, afterLeft, pressed);
     } else {
       // Add offset to the right scan code...

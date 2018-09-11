@@ -2,6 +2,7 @@
 
 #include "dbgcfg.h"
 #include "helpers.h"
+#include "switch_matrix.h"
 
 #if defined(DEBUG)
 
@@ -43,4 +44,13 @@ void dumpHex(uint64_t v, const char* header) {
   }
 }
 
+void dumpHex(const switch_matrix& m, const char* header) {
+  if (header)
+    Serial.print(header);
+  m.dumpHex();
+}
+
+void switch_matrix::dumpHex() const {
+  ::dumpHex(this->value);
+}
 #endif

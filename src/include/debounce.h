@@ -1,6 +1,7 @@
 #if !defined(DEBOUNCE_H)
 #define DEBOUNCE_H
+#include "switch_matrix.h"
 
-uint64_t debounce(uint64_t cur_switches, uint32_t now);
+switch_matrix debounce(const switch_matrix& cur_switches, uint32_t now);
 
 #endif

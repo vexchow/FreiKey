@@ -25,14 +25,13 @@ void BoardIO::Configure() const {
   analogWrite(led, 0);
 }
 
-uint64_t BoardIO::Read() const {
-  uint64_t switches = 0;
-  for (uint64_t colNum = 0; colNum < numcols; ++colNum) {
-    uint64_t val = 1ULL << colNum;
+switch_matrix BoardIO::Read() const {
+  switch_matrix switches;
+  for (uint8_t colNum = 0; colNum < numcols; ++colNum) {
     digitalWrite(cols[colNum], LOW);
-    for (uint64_t rowNum = 0; rowNum < numrows; ++rowNum) {
+    for (uint8_t rowNum = 0; rowNum < numrows; ++rowNum) {
       if (!digitalRead(rows[rowNum])) {
-        switches |= val << (rowNum * numcols);
+        switches.set_bit(colNum + rowNum * numcols);
       }
     }
     digitalWrite(cols[colNum], HIGH);
