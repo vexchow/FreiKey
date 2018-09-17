@@ -21,10 +21,10 @@ uint32_t winMode(const state::hw& sw, uint32_t time_offset) {
   return (time_offset & 0x20) ? 10 : 0;
 }
 
-constexpr led key_states[] = {
+const led key_states[] = {
     // These are the lower & outer 3 keys to get the battery status
-    {switch_matrix{0x10408000000ULL},
-     switch_matrix{0x1010200000ULL},
+    {{1,2,3,4,5,6},
+     {1,2,3,4,5,6},
      batteryFlasher,
      1000}};
 

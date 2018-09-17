@@ -44,13 +44,15 @@ void dumpHex(uint64_t v, const char* header) {
   }
 }
 
-void dumpHex(const switch_matrix& m, const char* header) {
+template <int T>
+void dumpHex(const switch_matrix<T>& m, const char* header) {
   if (header)
     Serial.print(header);
   m.dumpHex();
 }
-
-void switch_matrix::dumpHex() const {
-  ::dumpHex(this->value);
+template <int T>
+void switch_matrix<T>::dumpHex() const {
+  for (uint8_t i : this->value)
+    ::dumpHex(i);
 }
 #endif
