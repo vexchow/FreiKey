@@ -7,13 +7,15 @@
 // and a couple of macros to do stuff when the system is build with DEBUG=1 (or
 // 2). Set the DEBUG flag in the Makefile :)
 #if defined(DEBUG)
+template<int T>
 struct switch_matrix;
 void dumpVal(unsigned long v, const char* header = nullptr);
 void dumpHex(uint8_t v, const char* header = nullptr);
 void dumpHex(uint16_t v, const char* header = nullptr);
 void dumpHex(unsigned long v, const char* header = nullptr);
 void dumpHex(uint64_t v, const char* header = nullptr);
-void dumpHex(const switch_matrix &v, const char* header = nullptr);
+template<int T>
+void dumpHex(const switch_matrix<T> &v, const char* header = nullptr);
 void dumpHex(bool b, const char* header = nullptr);
 #define DBG(a) a
 #endif

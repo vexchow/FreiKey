@@ -3,38 +3,65 @@
 
 #include "helpers.h"
 #include "mybluefruit.h"
+#include <initializer_list>
 
+template <int T>
 struct switch_matrix {
-  static const uint32_t num_bits = 64;
-  uint64_t value;
-  switch_matrix() : value(0) {}
-  constexpr switch_matrix(uint64_t v) : value(v) {}
-  switch_matrix(bool b) : value(b ? static_cast<uint64_t>(-1ULL) : 0) {}
-  switch_matrix(const switch_matrix& m) : value(m.value) {}
-  bool operator==(const switch_matrix& m) const {
-    return m.value == value;
+  constexpr static uint32_t num_bits = T;
+  constexpr static uint32_t num_bytes = (T + 7) / 8;
+  uint8_t value[num_bytes];
+  switch_matrix() {
+    memset(&value[0], 0, sizeof(value));
   }
-  switch_matrix delta(const switch_matrix& compare) const {
-    uint64_t v = value ^ compare.value;
-    return switch_matrix{v};
+  switch_matrix(std::initializer_list<uint8_t> init) {
+    int num = 0;
+    for(uint8_t a : init) {
+      if (num >= num_bytes) {
+        return;
+      }
+      value[num++] = a;
+    }
+  }
+  switch_matrix(bool b) {
+    memset(&value[0], b ? 0xFF : 0, sizeof(value));
+  }
+  switch_matrix(const switch_matrix& m) {
+    memcpy(&value[0], &m.value[0], sizeof(value));
+  }
+  bool operator==(const switch_matrix& m) const {
+    return !memcmp(&value[0], &m.value[0], sizeof(value));
+  }
+  switch_matrix<T> delta(const switch_matrix& compare) const {
+    switch_matrix<T> v{};
+    for (size_t i = 0; i < sizeof(value); i++) {
+      v.value[i] = value[i] ^ compare.value[i];
+    }
+    return v;
   }
   bool any() const {
-    return !!value;
+    for (uint8_t i : value) {
+      if (i)
+        return true;
+    }
+    return false;
   }
   uint8_t pull_a_bit() {
-    uint8_t bit_num = flsl(value);
-    uint64_t mask = static_cast<uint64_t>(1) << bit_num;
-    value ^= mask;
-    return bit_num;
+    for (int i = 0; i < sizeof(value); i++) {
+      if (value[i]) {
+        uint8_t bit_num = flsl(value[i]);
+        value[i] ^= (1 << bit_num);
+        return bit_num + i * 8;
+      }
+    }
   }
   void flip_bit(uint8_t bitnum) {
-    value ^= 1ULL << bitnum;
+    value[bitnum >> 3] ^= 1 << (bitnum & 7);
   }
   void set_bit(uint8_t bitnum) {
-    value |= 1ULL << bitnum;
+    value[bitnum >> 3] |= 1 << (bitnum & 7);
   }
   bool get_bit(uint8_t bitnum) const {
-    return !!value & (1ULL << bitnum);
+    return !!(value[bitnum >> 3] & (1 << (bitnum & 7)));
   }
 #if defined(DEBUG)
   void dumpHex() const;
