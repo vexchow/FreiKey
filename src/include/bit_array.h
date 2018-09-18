@@ -6,14 +6,14 @@
 #include <initializer_list>
 
 template <int T>
-struct switch_matrix {
+struct bit_array {
   constexpr static uint32_t num_bits = T;
   constexpr static uint32_t num_bytes = (T + 7) / 8;
   uint8_t value[num_bytes];
-  switch_matrix() {
+  bit_array() {
     memset(&value[0], 0, sizeof(value));
   }
-  switch_matrix(std::initializer_list<uint8_t> init) {
+  bit_array(std::initializer_list<uint8_t> init) {
     int num = 0;
     for(uint8_t a : init) {
       if (num >= num_bytes) {
@@ -22,17 +22,17 @@ struct switch_matrix {
       value[num++] = a;
     }
   }
-  switch_matrix(bool b) {
+  bit_array(bool b) {
     memset(&value[0], b ? 0xFF : 0, sizeof(value));
   }
-  switch_matrix(const switch_matrix& m) {
+  bit_array(const bit_array& m) {
     memcpy(&value[0], &m.value[0], sizeof(value));
   }
-  bool operator==(const switch_matrix& m) const {
+  bool operator==(const bit_array& m) const {
     return !memcmp(&value[0], &m.value[0], sizeof(value));
   }
-  switch_matrix<T> delta(const switch_matrix& compare) const {
-    switch_matrix<T> v{};
+  bit_array<T> delta(const bit_array& compare) const {
+    bit_array<T> v{};
     for (size_t i = 0; i < sizeof(value); i++) {
       v.value[i] = value[i] ^ compare.value[i];
     }

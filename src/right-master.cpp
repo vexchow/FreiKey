@@ -12,7 +12,7 @@
 #include "scanner.h"
 #include "sleepstate.h"
 #include "status_dump.h"
-#include "switch_matrix.h"
+#include "bit_array.h"
 
 // I'm going to update this to keep track of additional state.
 // Each key 'previously' pressed should have a 'time last pressed'
@@ -102,7 +102,7 @@ action_t resolveActionForScanCodeOnActiveLayer(uint8_t scanCode) {
 
 // Given a delta mask, get the scan code, update the delta mask and set pressed
 // while we're at it.
-scancode_t getNextScanCode(switch_matrix<BoardIO::matrix_size>& delta, switch_matrix<BoardIO::matrix_size> &curState, bool& pressed) {
+scancode_t getNextScanCode(bit_array<BoardIO::matrix_size>& delta, bit_array<BoardIO::matrix_size> &curState, bool& pressed) {
   scancode_t sc = delta.pull_a_bit();
   pressed = curState.get_bit(sc);
   return sc;
@@ -209,10 +209,10 @@ void loop() {
   updateBatteryLevel(downLeft, downRight);
 
   // Get the before & after of each side into a 64 bit value
-  switch_matrix<BoardIO::matrix_size> beforeLeft = leftSide.switches;
-  switch_matrix<BoardIO::matrix_size> afterLeft = downLeft.switches;
-  switch_matrix<BoardIO::matrix_size> beforeRight = rightSide.switches;
-  switch_matrix<BoardIO::matrix_size> afterRight = downRight.switches;
+  bit_array<BoardIO::matrix_size> beforeLeft = leftSide.switches;
+  bit_array<BoardIO::matrix_size> afterLeft = downLeft.switches;
+  bit_array<BoardIO::matrix_size> beforeRight = rightSide.switches;
+  bit_array<BoardIO::matrix_size> afterRight = downRight.switches;
 
   // Pseudo-code for what I'm looking to clean up:
 #if 0
@@ -220,8 +220,8 @@ void loop() {
       beforeLeft, afterLeft, beforeRight, afterRight);
   PerformActionsForScanCodes(scanCodes);
 #endif
-  switch_matrix<BoardIO::matrix_size> deltaLeft = beforeLeft.delta(afterLeft);
-  switch_matrix<BoardIO::matrix_size> deltaRight = beforeRight.delta(afterRight);
+  bit_array<BoardIO::matrix_size> deltaLeft = beforeLeft.delta(afterLeft);
+  bit_array<BoardIO::matrix_size> deltaRight = beforeRight.delta(afterRight);
   bool keysChanged = deltaLeft.any() || deltaRight.any();
   if (deltaRight.any() && !curState) {
     // if we're not already in a state, check to see if we're transitioning

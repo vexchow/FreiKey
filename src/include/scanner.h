@@ -5,13 +5,13 @@
 
 #include "boardio.h"
 #include "hardware.h"
-#include "switch_matrix.h"
+#include "bit_array.h"
 
 std::vector<scancode_t> GetScanCodesForSwitchStates(
-    const switch_matrix<BoardIO::matrix_size>& beforeLeft,
-    const switch_matrix<BoardIO::matrix_size>& afterLeft,
-    const switch_matrix<BoardIO::matrix_size>& beforeRight,
-    const switch_matrix<BoardIO::matrix_size>& afterRight);
+    const bit_array<BoardIO::matrix_size>& beforeLeft,
+    const bit_array<BoardIO::matrix_size>& afterLeft,
+    const bit_array<BoardIO::matrix_size>& beforeRight,
+    const bit_array<BoardIO::matrix_size>& afterRight);
 void PerformActionsForScanCodes(const std::vector<scancode_t>& scanCodes);
 
 #endif
