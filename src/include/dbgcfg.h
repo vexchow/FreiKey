@@ -8,14 +8,14 @@
 // 2). Set the DEBUG flag in the Makefile :)
 #if defined(DEBUG)
 template<int T>
-struct switch_matrix;
+struct bit_array;
 void dumpVal(unsigned long v, const char* header = nullptr);
 void dumpHex(uint8_t v, const char* header = nullptr);
 void dumpHex(uint16_t v, const char* header = nullptr);
 void dumpHex(unsigned long v, const char* header = nullptr);
 void dumpHex(uint64_t v, const char* header = nullptr);
 template<int T>
-void dumpHex(const switch_matrix<T> &v, const char* header = nullptr);
+void dumpHex(const bit_array<T> &v, const char* header = nullptr);
 void dumpHex(bool b, const char* header = nullptr);
 #define DBG(a) a
 #endif

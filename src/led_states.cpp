@@ -1,5 +1,5 @@
 #include "led_states.h"
-#include "switch_matrix.h"
+#include "bit_array.h"
 
 namespace state {
 

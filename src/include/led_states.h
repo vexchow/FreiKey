@@ -2,13 +2,13 @@
 #define LED_STATES_H
 
 #include "hardware.h"
-#include "switch_matrix.h"
+#include "bit_array.h"
 #include "boardio.h"
 namespace state {
 
 struct led {
-  switch_matrix<BoardIO::matrix_size> left_state;
-  switch_matrix<BoardIO::matrix_size> right_state;
+  bit_array<BoardIO::matrix_size> left_state;
+  bit_array<BoardIO::matrix_size> right_state;
   uint32_t (*get_led_value)(const state::hw& switches, uint32_t time_offset);
   uint32_t time;
   static const led* get(const state::hw& switches, uint8_t layer = 0);

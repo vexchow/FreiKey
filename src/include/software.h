@@ -1,7 +1,7 @@
 #if !defined(SOFTWARE_H)
 #define SOFTWARE_H
 
-#include "switch_matrix.h"
+#include "bit_array.h"
 
 namespace state {
 class kb {
@@ -16,10 +16,10 @@ class kb {
   //  An "LED state" change
   //  An *internal only* state change (i.e. nothing)
   //  A list of most everything above
-  void resolveChanges(const switch_matrix& beforeLeft,
-                      const switch_matrix& afterleft,
-                      const switch_matrix& beforeRight,
-                      const switch_matrix& afterRight);
+  void resolveChanges(const bit_array& beforeLeft,
+                      const bit_array& afterleft,
+                      const bit_array& beforeRight,
+                      const bit_array& afterRight);
 }
 } // namespace state
 

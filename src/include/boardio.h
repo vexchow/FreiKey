@@ -2,7 +2,7 @@
 #define BOARDIO_H
 
 #include "mybluefruit.h"
-#include "switch_matrix.h"
+#include "bit_array.h"
 
 class BoardIO {
  public:
@@ -15,7 +15,7 @@ class BoardIO {
   uint8_t led;
 
   void Configure() const;
-  switch_matrix<matrix_size> Read() const;
+  bit_array<matrix_size> Read() const;
   void setLED(uint32_t brightness) const;
   static uint8_t getBatteryPercent();
 };

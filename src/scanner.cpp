@@ -2,10 +2,10 @@
 
 #include "scanner.h"
 
-std::vector<scancode_t> GetScanCodesForSwitchStates(switch_matrix<BoardIO::matrix_size> beforeLeft,
-                                                    switch_matrix<BoardIO::matrix_size> afterLeft,
-                                                    switch_matrix<BoardIO::matrix_size> beforeRight,
-                                                    switch_matrix<BoardIO::matrix_size> afterRight) {
+std::vector<scancode_t> GetScanCodesForSwitchStates(bit_array<BoardIO::matrix_size> beforeLeft,
+                                                    bit_array<BoardIO::matrix_size> afterLeft,
+                                                    bit_array<BoardIO::matrix_size> beforeRight,
+                                                    bit_array<BoardIO::matrix_size> afterRight) {
   return std::vector<scancode_t>{};
 }
 void PerformActionsForScanCodes(const std::vector<scancode_t>& scanCodes) {

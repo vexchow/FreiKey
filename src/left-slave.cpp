@@ -5,7 +5,7 @@
 #include "hardware.h"
 #include "led_states.h"
 #include "sleepstate.h"
-#include "switch_matrix.h"
+#include "bit_array.h"
 
 BLEDis bledis;
 BLEUart bleuart;

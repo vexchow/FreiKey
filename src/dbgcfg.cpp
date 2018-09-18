@@ -2,7 +2,7 @@
 
 #include "dbgcfg.h"
 #include "helpers.h"
-#include "switch_matrix.h"
+#include "bit_array.h"
 
 #if defined(DEBUG)
 
@@ -45,13 +45,13 @@ void dumpHex(uint64_t v, const char* header) {
 }
 
 template <int T>
-void dumpHex(const switch_matrix<T>& m, const char* header) {
+void dumpHex(const bit_array<T>& m, const char* header) {
   if (header)
     Serial.print(header);
   m.dumpHex();
 }
 template <int T>
-void switch_matrix<T>::dumpHex() const {
+void bit_array<T>::dumpHex() const {
   for (uint8_t i : this->value)
     ::dumpHex(i);
 }
