@@ -1,18 +1,16 @@
-# Let's try this, because Arduino is kind of a PITA
-# I basically just copied the crap out of the build output and dumped it here
+# Grabbed some stuff from Teensyduino to modify the stuff I slapped together
+# for Adafruit. Initially, I'm only getting it working on MacOS, because reasons
 
 # Some simple details
-OUT=out
+OUT=teensy
 
 # AdaFruit library installation location/version malarkey
-VER=0.8.4
 ifeq ($(OS),Windows_NT)
 	uname:=Windows
 else
 	uname:=$(shell uname -s)
 endif
 
-AFROOT=../../Adafruit_nRF52_Arduino
 SSD1306_ROOT=../../Adafruit_SSD1306
 GFX_ROOT=../../Adafruit-GFX-Library
 ifeq ($(uname), Windows)
@@ -44,9 +42,7 @@ AR=${TOOLS}/bin/arm-none-eabi-ar
 
 # Flags for compilation
 # First, DEBUG and STATUS_DUMP configuration flags (then everything else)
-# -DDEBUG
-# -DDEBUG=2
-DEFINES=-DSTATUS_DUMP \
+DEFINES=-DDEBUG -DSTATUS_DUMP \
 -DF_CPU=64000000 \
 -DARDUINO=10805 \
 -DARDUINO_NRF52_FEATHER \
