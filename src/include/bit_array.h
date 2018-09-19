@@ -23,9 +23,6 @@ struct bit_array {
       value[num++] = a;
     }
   }
-  bit_array(bool b) {
-    memset(&value[0], b ? 0xFF : 0, sizeof(value));
-  }
   bit_array(const bit_array& m) {
     memcpy(&value[0], &m.value[0], sizeof(value));
   }
