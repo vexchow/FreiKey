@@ -1,5 +1,8 @@
 #include <vector>
 
+#include "dbgcfg.h"
+#include "keymap.h"
+#include "keystate.h"
 #include "scanner.h"
 
 std::vector<scancode_t> GetScanCodesForSwitchStates(BoardIO::bits beforeLeft,
@@ -11,159 +14,204 @@ std::vector<scancode_t> GetScanCodesForSwitchStates(BoardIO::bits beforeLeft,
 void PerformActionsForScanCodes(const std::vector<scancode_t>& scanCodes) {
   return;
 }
-#if 0
-void otherStuff() {
 
-  uint64_t deltaLeft = beforeLeft ^ afterLeft;
-  uint64_t deltaRight = beforeRight ^ afterRight;
-  bool keysChanged = deltaLeft || deltaRight;
-  if (deltaRight && !curState) {
-    // if we're not already in a state, check to see if we're transitioning
-    // into one
-    curState = state::led::get(downRight, layer_pos + 1);
-    if (curState) {
-      stateTime = now;
+// Declarations
+
+keystate keyStates[16];
+layer_t layer_stack[layer_max + 1];
+layer_t layer_pos = 0;
+
+// Look for a slot that is either already in use for this scan code, or vacant.
+// If we don't have a vacant slot, return the oldest, but still in use, slot,
+// but only for key-up states, as we're probably through with them anyway.
+struct keystate* findStateSlot(uint8_t scanCode) {
+  keystate *vacant = nullptr, *reap = nullptr;
+  for (auto& s : keyStates) {
+    // If we have the same scan code, huzzah!
+    if (s.scanCode == scanCode) {
+      return &s;
     }
-  }
-
-  if (curState) {
-    // We're in some random LED display state. Do something...
-    if (now - curState->time < stateTime) {
-      RightBoard.setLED(curState->get_led_value(downRight, now - stateTime));
-    } else {
-      RightBoard.setLED(0);
-      curState = nullptr;
-    }
-  }
-
-  while (deltaLeft || deltaRight) {
-    scancode_t sc;
-    bool pressed;
-    if (deltaLeft) {
-      sc = getNextScanCode(deltaLeft, afterLeft, pressed);
-    } else {
-      // Add offset to the right scan code...
-      sc = getNextScanCode(deltaRight, afterRight, pressed) +
-           BoardIO::matrix_size;
-    }
-    DBG2(dumpScanCode(sc, pressed));
-
-    // Get a state slot for this scan code
-    keystate* state = findStateSlot(sc);
-    if (!state) {
-      // If this is a keydown and we don't have an available state slot just
-      // ignore it. If we chose to toss out older keydowns instead, things could
-      // get pretty weird. If this is a keyup, and we still don't have a state
-      // slot, that's a little bonkers, but there's not much we can do about it.
-      continue;
-    }
-    // State update returns a layer action to perform...
-    switch (state->update(sc, pressed, now)) {
-      case kPushLayer:
-        layer_push(state->get_layer());
-        break;
-      case kPopLayer:
-        layer_pop(state->get_layer());
-        break;
-      case kToggleLayer:
-        layer_toggle(state->get_layer());
-        break;
-      case kSwitchLayer:
-        layer_switch(state->get_layer());
-        break;
-    }
-  }
-
-  if (keysChanged) {
-    uint8_t report[6] = {0, 0, 0, 0, 0, 0};
-    uint8_t repsize = 0;
-    uint8_t mods = 0;
-
-    for (auto& state : keyStates) {
-      if (state.scanCode == 0xff)
-        continue;
-      if ((state.action & kConsumer) == kConsumer) {
-        // For a consumer control button, there are no modifiers, it's
-        // just a simple call. So just call it directly:
-        if (state.down) {
-          DBG2(dumpHex(state.action & 0xff, "Consumer key press: "));
-          hid.consumerKeyPress(state.action & 0xff);
-        } else {
-          DBG2(dumpHex(state.action & 0xff, "Consumer key release: "));
-          hid.consumerKeyRelease();
-          // We have to clear this thing out when we're done, because we take
-          // action on the key release as well. We don't do this for the normal
-          // keyboardReport.
-          state.scanCode = 0xff;
-        }
-      } else if (state.down) {
-        switch (state.action & kMask) {
-          case kTapHold:
-            if (now - state.lastChange > 200) {
-              // Holding
-              mods |= (state.action >> 16) & 0xff;
-            } else {
-              // Tapsg
-              auto key = state.action & 0xff;
-              if (key != 0 && repsize < 6) {
-                report[repsize++] = key;
-              }
-            }
-            break;
-          case kKeyAndMod: {
-            mods |= (state.action >> 16) & 0xff;
-            auto key = state.action & 0xff;
-            if (key != 0 && repsize < 6) {
-              report[repsize++] = key;
-            }
-          } break;
-          case kKeyPress: {
-            auto key = state.action & 0xff;
-            if (key != 0 && repsize < 6) {
-              report[repsize++] = key;
-            }
-          } break;
-          case kModifier:
-            mods |= state.action & 0xff;
-            break;
-          case kToggleMod:
-            mods ^= state.action & 0xff;
-            break;
-        }
+    // If we found a vacancy, potentially use it. We have to keep looking to see
+    // if we have the same scan code, though.
+    if (s.scanCode == 0xff) {
+      vacant = &s;
+    } else if (!s.down) {
+      if (!reap) {
+        reap = &s;
+      } else if (s.lastChange < reap->lastChange) {
+        // Idle longer than the other reapable candidate; choose
+        // the eldest of them
+        reap = &s;
       }
     }
-#if defined(DEBUG) && DEBUG > 1
-    Serial.print("mods=");
-    Serial.print(mods, HEX);
-    Serial.print(" repsize=");
-    Serial.print(repsize);
-    for (int i = 0; i < repsize; i++) {
-      Serial.print(" ");
-      Serial.print(report[i], HEX);
-    }
-    Serial.println("");
-#endif
-
-    // Update the hardware previous state
-    rightSide = downRight;
-    leftSide = downLeft;
-
-#if defined(STATUS_DUMP)
-    // If we do a status dump, don't pass the keys pressed on to the computer...
-    if (!status_dump_check(rightSide, leftSide))
-#endif
-      hid.keyboardReport(mods, report);
-    DBG2(Serial.println("============================="));
-    DBG2(Serial.print("Left side "));
-    DBG2(downLeft.dump());
-    DBG2(Serial.print("Right side "));
-    DBG2(downRight.dump());
-
-    if (rightSide.switches == status_clear_bonds_right &&
-        leftSide.switches == status_clear_bonds_left) {
-      DBG(Serial.println("CLEARING BLUETOOTH BONDS!"));
-      Bluefruit.clearBonds();
-    }
   }
+  if (vacant) {
+    return vacant;
+  }
+  return reap;
+}
+
+// Find the first specified action in the layer stack
+action_t resolveActionForScanCodeOnActiveLayer(uint8_t scanCode) {
+  layer_t s = layer_pos;
+  while (s > 0 && keymap[layer_stack[s]][scanCode] == ___) {
+    --s;
+  }
+  return keymap[layer_stack[s]][scanCode];
+}
+
+// Given a delta mask, get the scan code, update the delta mask and set pressed
+// while we're at it.
+scancode_t getNextScanCode(BoardIO::bits& delta,
+                           BoardIO::bits& curState,
+                           bool& pressed) {
+  scancode_t sc = delta.pull_a_bit();
+  pressed = curState.get_bit(sc);
+  return sc;
+}
+
+#if defined(DEBUG)
+void dumpScanCode(uint8_t sc, bool pressed) {
+  Serial.print("Scan Code ");
+  Serial.print(sc, HEX);
+  Serial.print(" was ");
+  Serial.println(pressed ? "pressed" : "released");
+}
+void dumpLayers() {
+  Serial.print("Layer stack: ");
+  for (int i = 0; i <= layer_pos; i++) {
+    Serial.print(layer_stack[i]);
+    Serial.print(" ");
+  }
+  Serial.println("");
 }
 #endif
+
+void layer_push(layer_t layer) {
+  DBG(dumpVal(layer, "Push "));
+  if (layer_pos < layer_max)
+    layer_stack[++layer_pos] = layer;
+  DBG(dumpLayers());
+}
+
+void layer_pop(layer_t layer) {
+  DBG(dumpVal(layer, "Pop "));
+  if (layer_pos > 0)
+    --layer_pos;
+  DBG(dumpLayers());
+}
+
+void layer_toggle(layer_t layer) {
+  // Toggling a layer: If it exists *anywhere* in the layer stack, turn it
+  // off (and fold the layer stack down) If it's *not* in the layer stack,
+  // add it.
+  for (layer_t l = layer_pos; l != 0; l--) {
+    if (layer_stack[l] == layer) {
+      DBG(dumpVal(layer, "Turning off layer "));
+      DBG(dumpVal(l, "at location "));
+      if (layer_pos != l) {
+        DBG(dumpVal(layer_pos - l, "Shifting by "));
+        memmove(&layer_stack[l], &layer_stack[l + 1], layer_pos - l);
+      }
+      layer_pos--;
+      DBG(dumpLayers());
+      return;
+    }
+  }
+  DBG(Serial.print("(For Toggle) "));
+  layer_push(layer);
+}
+
+void layer_switch(layer_t layer) {
+  DBG(dumpVal(layer_stack[layer_pos], "Switching layer "));
+  DBG(dumpVal(layer, "to layer "));
+  layer_stack[layer_pos] = layer;
+  DBG(dumpLayers());
+}
+
+void preprocessScanCode(scancode_t sc, bool pressed, uint32_t now) {
+  DBG2(dumpScanCode(sc, pressed));
+  // Get a state slot for this scan code
+  keystate* state = findStateSlot(sc);
+  if (!state) {
+    // If this is a keydown and we don't have an available state slot just
+    // ignore it. If we chose to toss out older keydowns instead, things could
+    // get pretty weird. If this is a keyup, and we still don't have a state
+    // slot, that's a little bonkers, but there's not much we can do about it.
+    return;
+  }
+  // State update returns a layer action to perform...
+  switch (state->update(sc, pressed, now)) {
+    case kPushLayer:
+      layer_push(state->get_layer());
+      break;
+    case kPopLayer:
+      layer_pop(state->get_layer());
+      break;
+    case kToggleLayer:
+      layer_toggle(state->get_layer());
+      break;
+    case kSwitchLayer:
+      layer_switch(state->get_layer());
+      break;
+  }
+}
+
+usb_report getUSBData(uint32_t now) {
+  usb_report res;
+
+  for (auto& state : keyStates) {
+    if (state.scanCode == 0xff)
+      continue;
+    if ((state.action & kConsumer) == kConsumer) {
+      if (res.consumer) {
+        DBG("Trying to press multiple consumer keys at once.");
+      }
+      // For a consumer control button, there are no modifiers, it's
+      // just a simple call. So just call it directly:
+      res.consumer = (state.action & 0xFF) * (state.down ? 1 : -1);
+      if (!state.down) {
+        // We have to clear this thing out when we're done, because we take
+        // action on the key release as well. We don't do this for the normal
+        // keyboardReport.
+        state.scanCode = 0xff;
+      }
+    } else if (state.down) {
+      uint8_t key;
+      switch (state.action & kMask) {
+        case kModifier:
+          res.mods |= state.action & 0xff;
+          break;
+        case kToggleMod:
+          res.mods ^= state.action & 0xff;
+          break;
+        case kTapHold:
+          if (now - state.lastChange > 200) {
+            // Holding
+            res.mods |= (state.action >> 16) & 0xff;
+          } else {
+            // Tapsg
+            key = state.action & 0xff;
+            if (key != 0 && res.repsize < 6) {
+              res.report[res.repsize++] = key;
+            }
+          }
+          break;
+        case kKeyAndMod:
+          res.mods |= (state.action >> 16) & 0xff;
+          key = state.action & 0xff;
+          if (key != 0 && res.repsize < 6) {
+            res.report[res.repsize++] = key;
+          }
+          break;
+        case kKeyPress:
+          key = state.action & 0xff;
+          if (key != 0 && res.repsize < 6) {
+            res.report[res.repsize++] = key;
+          }
+          break;
+      }
+    }
+  }
+  return res;
+}
