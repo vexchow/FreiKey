@@ -3,6 +3,7 @@
 #include "mybluefruit.h"
 #include <algorithm>
 
+#include "boardio.h"
 #include "globals.h"
 #include "hardware.h"
 #include "keyhelpers.h"
@@ -18,12 +19,12 @@ extern const char* layer_names[];
 
 // If you hold this configuration down, it types out status
 // Lowest out, and the key directly above it
-constexpr uint64_t status_keys_left = 0x10200000000ULL;
+const BoardIO::bits status_keys_left{{1, 2, 3, 4, 5}}; // 0x10200000000ULL
 // Thumb low edge and right most bottom row
-constexpr uint64_t status_keys_right = 0x1020000000ULL;
+const BoardIO::bits status_keys_right{{1, 2, 3, 4, 5}}; // 0x1020000000ULL;
 // If you hold this down, just on the right keyboard, it shows RHS status only
 // Sameas above, just add the rightmost key on the second to bottom row
-constexpr uint64_t just_right_stat = 0x1030000000ULL;
+const BoardIO::bits just_right_stat{{1, 2, 3, 4, 5}}; // 0x1030000000ULL;
 
 // I used to implement this all myself, but then I discovered it was alread in
 // the hid class :)

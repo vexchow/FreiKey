@@ -38,8 +38,8 @@ state::hw leftSide{};
 state::hw rightSide{};
 
 // The are the top left & right keys, plus the lowest 'outer' key
-constexpr uint64_t status_clear_bonds_left = 0x10000000042ULL;
-constexpr uint64_t status_clear_bonds_right = 0x1000000021ULL;
+const BoardIO::bits status_clear_bonds_left{{1, 2, 3, 4, 5}}; // 0x10000000042ULL;
+const BoardIO::bits status_clear_bonds_right{{1, 2, 3, 4, 5}}; // 0x1000000021ULL;
 
 // Declarations
 
