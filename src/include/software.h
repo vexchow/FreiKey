@@ -1,7 +1,7 @@
 #if !defined(SOFTWARE_H)
 #define SOFTWARE_H
 
-#include "bit_array.h"
+#include "boardio.h"
 
 namespace state {
 class kb {
@@ -16,10 +16,10 @@ class kb {
   //  An "LED state" change
   //  An *internal only* state change (i.e. nothing)
   //  A list of most everything above
-  void resolveChanges(const bit_array& beforeLeft,
-                      const bit_array& afterleft,
-                      const bit_array& beforeRight,
-                      const bit_array& afterRight);
+  void resolveChanges(const BoardIO::bits& beforeLeft,
+                      const BoardIO::bits& afterleft,
+                      const BoardIO::bits& beforeRight,
+                      const BoardIO::bits& afterRight);
 }
 } // namespace state
 

@@ -1,9 +1,10 @@
 #if !defined(SWITCH_MATRIX_H)
 #define SWITCH_MATRIX_H
 
+#include <initializer_list>
+
 #include "helpers.h"
 #include "mybluefruit.h"
-#include <initializer_list>
 
 template <int T>
 struct bit_array {
@@ -15,7 +16,7 @@ struct bit_array {
   }
   bit_array(std::initializer_list<uint8_t> init) {
     int num = 0;
-    for(uint8_t a : init) {
+    for (uint8_t a : init) {
       if (num >= num_bytes) {
         return;
       }

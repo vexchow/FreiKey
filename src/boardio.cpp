@@ -25,8 +25,8 @@ void BoardIO::Configure() const {
   analogWrite(led, 0);
 }
 
-bit_array<BoardIO::matrix_size> BoardIO::Read() const {
-  bit_array<BoardIO::matrix_size> switches;
+BoardIO::bits BoardIO::Read() const {
+  BoardIO::bits switches;
   for (uint8_t colNum = 0; colNum < numcols; ++colNum) {
     digitalWrite(cols[colNum], LOW);
     delay(1);
