@@ -3,15 +3,15 @@
 
 #include <vector>
 
+#include "bit_array.h"
 #include "boardio.h"
 #include "hardware.h"
-#include "bit_array.h"
 
 std::vector<scancode_t> GetScanCodesForSwitchStates(
-    const bit_array<BoardIO::matrix_size>& beforeLeft,
-    const bit_array<BoardIO::matrix_size>& afterLeft,
-    const bit_array<BoardIO::matrix_size>& beforeRight,
-    const bit_array<BoardIO::matrix_size>& afterRight);
+    const BoardIO::bits& beforeLeft,
+    const BoardIO::bits& afterLeft,
+    const BoardIO::bits& beforeRight,
+    const BoardIO::bits& afterRight);
 void PerformActionsForScanCodes(const std::vector<scancode_t>& scanCodes);
 
 #endif

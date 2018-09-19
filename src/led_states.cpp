@@ -1,5 +1,4 @@
 #include "led_states.h"
-#include "bit_array.h"
 
 namespace state {
 
@@ -23,10 +22,7 @@ uint32_t winMode(const state::hw& sw, uint32_t time_offset) {
 
 const led key_states[] = {
     // These are the lower & outer 3 keys to get the battery status
-    {{1,2,3,4,5,6},
-     {1,2,3,4,5,6},
-     batteryFlasher,
-     1000}};
+    {{1, 2, 3, 4, 5, 6}, {1, 2, 3, 4, 5, 6}, batteryFlasher, 1000}};
 
 const led* led::get(const state::hw& sw, uint8_t layer) {
   for (auto& st : key_states) {
