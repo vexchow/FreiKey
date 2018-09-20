@@ -1,7 +1,7 @@
 #if !defined(STATE_HARDWARE_H)
 #define STATE_HARDWARE_H
 
-#include "mybluefruit.h"
+#include "sysstuff.h"
 
 #include "boardio.h"
 #include "dbgcfg.h"

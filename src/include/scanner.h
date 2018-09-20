@@ -1,7 +1,7 @@
 #if !defined(SCANNER_H)
 #define SCANNER_H
 
-#include "mybluefruit.h"
+#include "sysstuff.h"
 #include <vector>
 
 #include "bit_array.h"

@@ -5,6 +5,7 @@
 #include "keystate.h"
 #include "scanner.h"
 
+// This stuff is WIP, and I'm not doing it yet. Maybe some day...
 std::vector<scancode_t> GetScanCodesForSwitchStates(BoardIO::bits beforeLeft,
                                                     BoardIO::bits afterLeft,
                                                     BoardIO::bits beforeRight,
