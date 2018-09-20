@@ -2,7 +2,7 @@
 #define BOARDIO_H
 
 #include "bit_array.h"
-#include "mybluefruit.h"
+#include "sysstuff.h"
 
 class BoardIO {
  public:

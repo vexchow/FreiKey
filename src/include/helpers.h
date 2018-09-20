@@ -1,7 +1,7 @@
 #if !defined(HELPERS_H)
 #define HELPERS_H
 
-#include "mybluefruit.h"
+#include "sysstuff.h"
 
 // Find last bit set in a long (BSD function, not available in Arduino)
 inline uint8_t flsl(uint64_t val) {

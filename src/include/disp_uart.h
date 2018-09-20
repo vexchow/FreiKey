@@ -1,7 +1,7 @@
 #if !defined(DISP_UART_H)
 #define DISP_UART_H
 
-#include "mybluefruit.h"
+#include "sysstuff.h"
 
 #include "disp_globals.h"
 
