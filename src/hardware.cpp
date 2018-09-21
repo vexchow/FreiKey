@@ -1,7 +1,8 @@
 #include "hardware.h"
-#include "boardio.h"
-#include "debounce.h"
 #include "battery.h"
+#include "boardio.h"
+#include "dbgcfg.h"
+#include "debounce.h"
 
 namespace state {
 
@@ -17,13 +18,6 @@ hw::hw(uint32_t now, const hw& prev, const BoardIO& pd)
   readSwitches(pd, now);
 }
 
-hw::hw(BLEClientUart& clientUart, const hw& prev) {
-  if (!receive(clientUart, prev))
-    memcpy(reinterpret_cast<uint8_t*>(this),
-           reinterpret_cast<const uint8_t*>(&prev),
-           sizeof(hw));
-}
-
 hw::hw(const hw& c) : switches{c.switches}, battery_level{c.battery_level} {}
 
 void hw::readSwitches(const BoardIO& pd, uint32_t now) {
@@ -32,6 +26,15 @@ void hw::readSwitches(const BoardIO& pd, uint32_t now) {
 #endif
   // Read & debounce the current key matrix
   this->switches = debounce(pd.Read(), now);
+}
+
+#if !defined(TEENSY)
+
+hw::hw(BLEClientUart& clientUart, const hw& prev) {
+  if (!receive(clientUart, prev))
+    memcpy(reinterpret_cast<uint8_t*>(this),
+           reinterpret_cast<const uint8_t*>(&prev),
+           sizeof(hw));
 }
 
 // Send the relevant data over the wire
@@ -63,6 +66,8 @@ bool hw::receive(BLEClientUart& clientUart, const hw& prev) {
   }
   return false;
 }
+
+#endif
 
 bool hw::operator==(const hw& o) const {
   return o.battery_level == battery_level && o.switches == switches;

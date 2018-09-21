@@ -29,6 +29,9 @@ void dumpHex(uint8_t v, const char* header) {
 void dumpHex(bool v, const char* header) {
   dumpHex(static_cast<unsigned long>(v), header);
 }
+void dumpStr(const char *str) {
+  Serial.print(str);
+}
 
 const char* zeros = "00000000";
 void dumpHex(uint64_t v, const char* header) {
@@ -44,15 +47,4 @@ void dumpHex(uint64_t v, const char* header) {
   }
 }
 
-template <int T>
-void dumpHex(const bit_array<T>& m, const char* header) {
-  if (header)
-    Serial.print(header);
-  m.dumpHex();
-}
-template <int T>
-void bit_array<T>::dumpHex() const {
-  for (uint8_t i : this->value)
-    ::dumpHex(i);
-}
 #endif

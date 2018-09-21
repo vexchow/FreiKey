@@ -1,6 +1,6 @@
 #if defined(STATUS_DUMP)
 
-#include "mybluefruit.h"
+#include "sysstuff.h"
 #include <algorithm>
 
 #include "boardio.h"
@@ -12,7 +12,10 @@
 // TODO: Expose this stuff somehow. This is a disgusting hack to get at some
 // necessary state, and it makes me slightly queasy
 
+#if !defined(TEENSY)
 extern BLEHidAdafruit hid;
+#endif
+
 extern layer_t* layer_stack;
 extern layer_t layer_pos;
 extern const char* layer_names[];
@@ -29,7 +32,9 @@ const BoardIO::bits just_right_stat{{1, 2, 3, 4, 5}}; // 0x1030000000ULL;
 // I used to implement this all myself, but then I discovered it was alread in
 // the hid class :)
 void type_string(const char* str) {
+#if !defined(TEENSY)
   hid.keySequence(str);
+#endif
 }
 
 // Interview question ahead!
@@ -66,10 +71,12 @@ bool status_dump_check(const state::hw& rightSide, const state::hw& leftSide) {
       type_number(i);
       type_string(i == layer_pos ? ")" : "), ");
     }
+#if !defined(TEENSY)
     DBG(Bluefruit.printInfo());
     DBG(dumpHex(Bluefruit.connHandle(), "Connection handle: "));
     DBG(dumpHex(Bluefruit.connPaired(), "Connection paired: "));
     DBG(dumpHex(core_handle, "Core Connection handle: "));
+#endif
     return true;
   }
   return false;

@@ -19,7 +19,7 @@ state::hw bfState;
 void resetTheWorld() {
   layer_pos = 0;
   layer_stack[0] = 0;
-  memset(&bfState, 0, sizeof(leftSide));
+  memset(&bfState, 0, sizeof(bfState));
   memset(keyStates, 0xff, sizeof(keyStates));
 
   // TOOD: hid.keyRelease();

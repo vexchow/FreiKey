@@ -14,9 +14,15 @@ void dumpHex(uint8_t v, const char* header = nullptr);
 void dumpHex(uint16_t v, const char* header = nullptr);
 void dumpHex(unsigned long v, const char* header = nullptr);
 void dumpHex(uint64_t v, const char* header = nullptr);
-template<int T>
-void dumpHex(const bit_array<T> &v, const char* header = nullptr);
 void dumpHex(bool b, const char* header = nullptr);
+void dumpStr(const char *str);
+template <int T>
+void dumpHex(const bit_array<T>& m, const char* header = nullptr) {
+  if (header)
+    dumpStr(header);
+  m.dumpHex();
+}
+
 #define DBG(a) a
 #endif
 
