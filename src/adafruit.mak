@@ -47,6 +47,8 @@ AR=${TOOLS}/bin/arm-none-eabi-ar
 # -DDEBUG
 # -DDEBUG=2
 DEFINES=-DSTATUS_DUMP \
+-DHAS_BATTERY \
+-DHAS_LED \
 -DF_CPU=64000000 \
 -DARDUINO=10805 \
 -DARDUINO_NRF52_FEATHER \
@@ -60,6 +62,7 @@ DEFINES=-DSTATUS_DUMP \
 -DUSE_LFXO \
 -DS132 \
 -DSD_VER=510 \
+-DADAFRUIT \
 -DCFG_DEBUG=0
 TARGET=-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16
 CODEGEN=-nostdlib --param max-inline-insns-single=500 -ffunction-sections -fdata-sections

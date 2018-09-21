@@ -12,7 +12,7 @@
 // TODO: Expose this stuff somehow. This is a disgusting hack to get at some
 // necessary state, and it makes me slightly queasy
 
-#if !defined(TEENSY)
+#if defined(ADAFRUIT)
 extern BLEHidAdafruit hid;
 #endif
 
@@ -32,7 +32,7 @@ const BoardIO::bits just_right_stat{{1, 2, 3, 4, 5}}; // 0x1030000000ULL;
 // I used to implement this all myself, but then I discovered it was alread in
 // the hid class :)
 void type_string(const char* str) {
-#if !defined(TEENSY)
+#if defined(ADAFRUIT)
   hid.keySequence(str);
 #endif
 }
@@ -56,6 +56,7 @@ bool status_dump_check(const state::hw& rightSide, const state::hw& leftSide) {
   // Check for hardware request thingamajig:
   // This is hard coded, mostly because I'm just hacking
   if (justRight || (leftCheck && rightCheck)) {
+#if defined(HAS_BATTERY)
     if (!justRight) {
       type_string("Lbat:");
       type_number(leftSide.battery_level);
@@ -63,7 +64,9 @@ bool status_dump_check(const state::hw& rightSide, const state::hw& leftSide) {
     }
     type_string("Rbat: ");
     type_number(rightSide.battery_level);
-    type_string("% Layer: ");
+    type_string("% ");
+#endif
+    type_string("Layer: ");
     for (uint8_t i = 0; i <= std::min(layer_pos, maxLayers); i++) {
       uint8_t layerLoc = std::min(layer_stack[i], maxLayers);
       type_string(layer_names[layerLoc]);
@@ -71,7 +74,7 @@ bool status_dump_check(const state::hw& rightSide, const state::hw& leftSide) {
       type_number(i);
       type_string(i == layer_pos ? ")" : "), ");
     }
-#if !defined(TEENSY)
+#if defined(ADAFRUIT)
     DBG(Bluefruit.printInfo());
     DBG(dumpHex(Bluefruit.connHandle(), "Connection handle: "));
     DBG(dumpHex(Bluefruit.connPaired(), "Connection paired: "));

@@ -55,7 +55,7 @@ constexpr layer_t kSwitchLayer = 4;
 #define KEY_APPLICATION KEY_MENU
 #else
 #define PK(a) PASTE(HID_KEY_, a)
-#define PM(a) PASTE(KEYBOARD_MODIFIER, a)
+#define PM(a) PASTE(KEYBOARD_MODIFIER_, a)
 #endif
 #define KEY(a) kKeyPress | PK(a)
 #define MOD(a) kModifier | PM(a)
@@ -64,9 +64,9 @@ constexpr layer_t kSwitchLayer = 4;
 
 #define TAPH(a, b) kTapHold | PK(a) | (PM(b) << 16)
 #define KMOD(a, b) kKeyAndMod | PK(a) | (PM(b) << 16)
-#define MOD1(a, b) kKeyAndMod | a | (PK(b) << 16)
+#define MOD1(a, b) kKeyAndMod | a | (PM(b) << 16)
 #define KMOD2(a, b, c) kKeyAndMod | PK(a) | ((PM(b) | PM(c)) << 16)
-#define MOD2(a, b, c) kKeyAndMod | a | ((PK(b) | PM(c)) << 16)
+#define MOD2(a, b, c) kKeyAndMod | a | ((PM(b) | PM(c)) << 16)
 #define KMOD3(a, b, c, d) kKeyAndMod | PK(a) | ((PM(b) | PM(c) | PM(d)) << 16)
 #define MOD3(a, b, c, d) kKeyAndMod | a | ((PM(b) | PM(c) | PM(d)) << 16)
 #define KMOD4(a, b, c, d, e) \

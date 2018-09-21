@@ -8,7 +8,7 @@ class BoardIO {
  public:
 #if defined(TEENSY)
   static const uint8_t numcols = 12;
-#else
+#elif defined(ADAFRUIT)
   static const uint8_t numcols = 7;
 #endif
   static const uint8_t numrows = 6;
@@ -17,9 +17,11 @@ class BoardIO {
 
   uint8_t cols[numcols];
   uint8_t rows[numrows];
+  #if defined(HAS_LED)
   uint8_t led;
   void setLED(uint32_t brightness) const;
-#if !defined(TEENSY)
+#endif
+#if defined(HAS_BATTERY)
   static uint8_t getBatteryPercent();
 #endif
   void Configure() const;

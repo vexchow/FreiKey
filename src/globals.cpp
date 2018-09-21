@@ -3,7 +3,7 @@
 
 // Global variables in need of instantiation
 
-#if !defined(TEENSY)
+#if defined(ADAFRUIT)
 BLEDis dis;
 BLEHidAdafruit hid;
 BLEClientUart clientUart;

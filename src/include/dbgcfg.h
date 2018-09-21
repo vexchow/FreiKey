@@ -1,6 +1,10 @@
 #if !defined(DBGCFG_H)
 #define DBGCFG_H
 
+#if !defined(ADAFRUIT) && !defined(TEENSY)
+#error Sorry: Unsupported platform
+#endif
+
 #include <cstdint>
 
 // This is just a couple of dumpers that show stuff on the AdaFruit serial port,

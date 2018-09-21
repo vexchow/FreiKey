@@ -61,7 +61,7 @@ CLANG=-std=gnu14
 SLANG=-x assembler-with-cpp
 OPT=-Os
 
-SHARED_SRC = dbgcfg.cpp hardware.cpp led_states.cpp boardio.cpp debounce.cpp \
+SHARED_SRC = dbgcfg.cpp hardware.cpp boardio.cpp debounce.cpp \
 	sleepstate.cpp
 BETTERFLY_SRC = status_dump.cpp globals.cpp betterfly.cpp scanner.cpp
 DISP_SRC = display.cpp disp_uart.cpp

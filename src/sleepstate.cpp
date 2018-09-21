@@ -11,8 +11,10 @@ bool SleepState::CheckForSleeping(bool pressed,
     if (pressed) {
       // We detected a keypress!
       if (sleeping) {
+#if defined(HAS_LED)
         // Turn off the LED if we were sleeping
         board.setLED(0);
+#endif
         DBG(dumpVal(lastPressTime, "Exiting sleep from "));
       }
       sleeping = false;
@@ -24,11 +26,13 @@ bool SleepState::CheckForSleeping(bool pressed,
       DBG(dumpVal(time, "Entering sleep from "));
     }
   }
+#if defined(HAS_LED)
   if (sleeping || forced) {
     // Blink the LED a little bit
     uint8_t brightness = !((time >> 9) & 3);
     board.setLED(brightness);
   }
+#endif
   return sleeping;
 }
 

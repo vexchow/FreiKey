@@ -1,10 +1,10 @@
 #if !defined(SYSSTUFF_H)
 #define SYSSTUFF_H
-#if !defined(TEENSYDUINO)
+#if defined(ADAFRUIT)
 #include <bluefruit.h>
 #undef min
 #undef max
-#else
+#elif defined(TEENSY)
 // Put the Teensy headers in here
 #include <core_pins.h>
 #include <keylayouts.h>
