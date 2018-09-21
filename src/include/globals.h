@@ -6,7 +6,7 @@
 #include "sleepstate.h"
 #include "hardware.h"
 
-#if !defined(TEENSY)
+#if defined(ADAFRUIT)
 extern BLEDis dis;
 extern BLEHidAdafruit hid;
 extern BLEClientUart clientUart;
@@ -16,6 +16,7 @@ extern state::hw rightSide;
 
 extern uint16_t core_handle;
 #endif
+
 extern SleepState sleepState;
 
 #endif

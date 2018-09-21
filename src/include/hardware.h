@@ -20,8 +20,9 @@ namespace state {
 // which switches are down, as well as the current battery level.
 struct hw {
   BoardIO::bits switches;
+#if defined(HAS_BATTERY)
   uint8_t battery_level;
-
+#endif
   // This is just a dump constructor
   hw(uint8_t bl = 0);
 
@@ -34,7 +35,7 @@ struct hw {
   // Just reads the switches...
   void readSwitches(const BoardIO& pd, uint32_t now);
 
-#if !defined(TEENSY)
+#if defined(ADAFRUIT)
   // This is for reading the data from the left hand side over the UART
   hw(BLEClientUart& clientUart, const hw& prev);
 

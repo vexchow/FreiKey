@@ -4,21 +4,27 @@
 #include "dbgcfg.h"
 #include "debounce.h"
 
+#if defined(HAS_BATTERY)
+#define BATTERY_LEVEL(a) , battery_level(a)
+#else
+#define BATTERY_LEVEL(a)
+#endif
+
 namespace state {
 
 #if defined(DEBUG)
 uint32_t scans_since_last_time = 0;
 #endif
 
-hw::hw(uint8_t bl) : switches{}, battery_level{bl} {}
+hw::hw(uint8_t bl) : switches() BATTERY_LEVEL(bl) {}
 
 hw::hw(uint32_t now, const hw& prev, const BoardIO& pd)
-    : switches{prev.switches},
-      battery_level{readBattery(now, prev.battery_level)} {
+    : switches(prev.switches)
+          BATTERY_LEVEL(readBattery(now, prev.battery_level)) {
   readSwitches(pd, now);
 }
 
-hw::hw(const hw& c) : switches{c.switches}, battery_level{c.battery_level} {}
+hw::hw(const hw& c) : switches(c.switches) BATTERY_LEVEL(c.battery_level) {}
 
 void hw::readSwitches(const BoardIO& pd, uint32_t now) {
 #if defined(DEBUG)
@@ -28,7 +34,7 @@ void hw::readSwitches(const BoardIO& pd, uint32_t now) {
   this->switches = debounce(pd.Read(), now);
 }
 
-#if !defined(TEENSY)
+#if defined(ADAFRUIT)
 
 hw::hw(BLEClientUart& clientUart, const hw& prev) {
   if (!receive(clientUart, prev))
@@ -70,7 +76,11 @@ bool hw::receive(BLEClientUart& clientUart, const hw& prev) {
 #endif
 
 bool hw::operator==(const hw& o) const {
-  return o.battery_level == battery_level && o.switches == switches;
+  return
+#if defined(HAS_BATTERY)
+      o.battery_level == battery_level &&
+#endif
+      o.switches == switches;
 }
 
 bool hw::operator!=(const hw& o) const {
@@ -79,7 +89,9 @@ bool hw::operator!=(const hw& o) const {
 
 #if defined(DEBUG)
 void hw::dump() const {
+#if defined(HAS_BATTERY)
   dumpVal(battery_level, "Battery Level:");
+#endif
   dumpHex(switches, "Integer value: ");
   for (int64_t r = 0; r < BoardIO::numrows; r++) {
     for (int64_t c = BoardIO::numcols - 1; c >= 0; c--) {

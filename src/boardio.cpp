@@ -4,7 +4,7 @@
 #include "dbgcfg.h"
 
 void BoardIO::Configure() const {
-#if !defined(TEENSY)
+#if defined(HAS_BATTERY)
   analogReference(AR_INTERNAL_3_0);
   analogReadResolution(12);
 #endif
@@ -18,9 +18,11 @@ void BoardIO::Configure() const {
   for (auto pin : rows) {
     pinMode(pin, INPUT_PULLUP);
   }
+#if defined(HAS_LED)
   pinMode(led, OUTPUT);
 
   analogWrite(led, 0);
+#endif
 }
 
 BoardIO::bits BoardIO::Read() const {
@@ -37,11 +39,13 @@ BoardIO::bits BoardIO::Read() const {
   return switches;
 }
 
+#if defined(HAS_LED)
 void BoardIO::setLED(uint32_t brightness) const {
   analogWrite(led, brightness);
 }
+#endif
 
-#if !defined(TEENSY)
+#if defined(HAS_BATTERY)
 // pin 31 is available for sampling the battery
 constexpr uint8_t VBAT_PIN = 31;
 
