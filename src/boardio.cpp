@@ -4,12 +4,10 @@
 #include "dbgcfg.h"
 
 void BoardIO::Configure() const {
-  static_assert(
-      BoardIO::matrix_size <= 64,
-      "Pervasive assumptions that the switch matrix fits in 64 bits.");
-
+#if !defined(TEENSY)
   analogReference(AR_INTERNAL_3_0);
   analogReadResolution(12);
+#endif
   delay(1);
 
   // For my wiring, the columns are output, and the rows are input...
@@ -44,6 +42,7 @@ void BoardIO::setLED(uint32_t brightness) const {
   analogWrite(led, brightness);
 }
 
+#if !defined(TEENSY)
 // pin 31 is available for sampling the battery
 constexpr uint8_t VBAT_PIN = 31;
 
@@ -68,3 +67,5 @@ uint8_t BoardIO::getBatteryPercent() {
     return 0;
   }
 }
+
+#endif

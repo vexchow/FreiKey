@@ -38,10 +38,7 @@
         "${workspaceRoot}/../../Adafruit_SSD1306",
         "${workspaceRoot}/../../Adafruit-GFX-Library"
       ],
-      "defines": [
-        "DEBUG",
-        "LOGGING",
-        "STATUS_DUMP",
+      "adadefines": [
         "F_CPU=64000000",
         "ARDUINO=10805",
         "ARDUINO_NRF52_FEATHER",
@@ -55,7 +52,19 @@
         "USE_LFXO",
         "S132",
         "SD_VER=510",
-        "CFG_DEBUG=0",
+        "CFG_DEBUG=0"
+      ],
+      "defines": [
+        "DEBUG",
+        "LOGGING",
+        "STATUS_DUMP",
+        "F_CPU=96000000",
+        "ARDUINO=10805",
+        "USB_SERIAL",
+        "LAYOUT_US_ENGLISH",
+        "USING_MAKEFILE",
+        "__MK20DX256__",
+        "TEENSYDUINO=143",
         "__VSCODE_ONLY_"
       ],
       "intelliSenseMode": "clang-x64",

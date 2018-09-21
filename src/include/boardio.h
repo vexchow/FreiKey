@@ -6,7 +6,7 @@
 
 class BoardIO {
  public:
-#if defined(BETTERFLY)
+#if defined(TEENSY)
   static const uint8_t numcols = 12;
 #else
   static const uint8_t numcols = 7;
@@ -17,9 +17,9 @@ class BoardIO {
 
   uint8_t cols[numcols];
   uint8_t rows[numrows];
-#if !defined(BETTERFLY)
   uint8_t led;
   void setLED(uint32_t brightness) const;
+#if !defined(TEENSY)
   static uint8_t getBatteryPercent();
 #endif
   void Configure() const;

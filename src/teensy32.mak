@@ -31,6 +31,7 @@ MCU=MK20DX256
 MKU_LD=mk20dx256.ld
 
 TOOLS=${ARDUINOROOT}/hardware/tools
+AVR=${ARDUINOROOT}/hardware/teensy/avr
 
 # Tools (probably don't need to change these at all)
 CC=${TOOLS}/arm/bin/arm-none-eabi-gcc
@@ -41,7 +42,8 @@ AR=${TOOLS}/arm/bin/arm-none-eabi-ar
 # Flags for compilation
 # First, DEBUG and STATUS_DUMP configuration flags (then everything else)
 # F_CPU = CPU Frequency. 96MHz! Boo yah!!!!
-DEFINES=-DDEBUG -DSTATUS_DUMP \
+DEFINES=-DDEBUG \
+-DSTATUS_DUMP \
 -DF_CPU=96000000 \
 -DARDUINO=10805 \
 -DUSB_SERIAL \
@@ -49,7 +51,8 @@ DEFINES=-DDEBUG -DSTATUS_DUMP \
 -DUSING_MAKEFILE \
 -D__$(MCU)__ \
 -DARDUINO_BSP_VERSION=\"${VER}\" \
--DTEENSYDUINO=143
+-DTEENSYDUINO=143 \
+-DTEENSY
 TARGET=-mcpu=cortex-m4 -mthumb
 CODEGEN=-ffunction-sections -fdata-sections
 FLAGS=-g -Wall -u _printf_float -MMD
@@ -59,16 +62,18 @@ SLANG=-x assembler-with-cpp
 OPT=-Os
 
 SHARED_SRC = dbgcfg.cpp hardware.cpp led_states.cpp boardio.cpp debounce.cpp \
-	sleepstate.cpp battery.cpp
-RIGHT_SRC = status_dump.cpp globals.cpp right-master.cpp callbacks.cpp \
-	scanner.cpp
-LEFT_SRC = left-slave.cpp
+	sleepstate.cpp
+BETTERFLY_SRC = status_dump.cpp globals.cpp betterfly.cpp scanner.cpp
 DISP_SRC = display.cpp disp_uart.cpp
-USER_SRC = ${SHARED_SRC} ${RIGHT_SRC} ${LEFT_SRC} ${DISP_SRC}
+USER_SRC = ${SHARED_SRC} ${BETTERFLY_SRC} ${DISP_SRC}
 
 INCLUDES=-Iinclude \
+  "-I${AVR}/cores/teensy3"\
+  "-I${AVR}/libraries/SPI"\
+  "-I${AVR}/libraries/Wire"\
 	"-I${GFX_ROOT}"\
-	"-I${SSD1306_ROOT}"
+	"-I${SSD1306_ROOT}"\
+
 
 ELF_FLAGS = ${OPT} ${TARGET} -save-temps \
 -Wl,--defsym=__rtc_localtime=0 \

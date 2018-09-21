@@ -3,6 +3,7 @@
 
 #include <initializer_list>
 
+#include "dbgcfg.h"
 #include "helpers.h"
 #include "sysstuff.h"
 
@@ -62,7 +63,10 @@ struct bit_array {
     return !!(value[bitnum >> 3] & (1 << (bitnum & 7)));
   }
 #if defined(DEBUG)
-  void dumpHex() const;
+  void dumpHex() const {
+    for (uint8_t i : this->value)
+      ::dumpHex(i);
+  }
 #endif
 };
 
