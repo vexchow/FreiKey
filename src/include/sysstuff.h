@@ -6,9 +6,9 @@
 #undef max
 #elif defined(TEENSY)
 // Put the Teensy headers in here
-#include <core_pins.h>
-#include <keylayouts.h>
+#include "core_pins.h"
+#include "usb_keyboard.h"
+#include "usb_serial.h"
 #include <stddef.h>
-#include <usb_serial.h>
 #endif
 #endif

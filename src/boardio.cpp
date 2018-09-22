@@ -7,8 +7,8 @@ void BoardIO::Configure() const {
 #if defined(HAS_BATTERY)
   analogReference(AR_INTERNAL_3_0);
   analogReadResolution(12);
-#endif
   delay(1);
+#endif
 
   // For my wiring, the columns are output, and the rows are input...
   for (auto pin : cols) {

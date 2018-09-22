@@ -24,7 +24,7 @@ template <int T>
 void dumpHex(const bit_array<T>& m, const char* header = nullptr) {
   if (header)
     dumpStr(header);
-  m.dumpHex();
+  m.dumpHex("");
 }
 
 #define DBG(a) a

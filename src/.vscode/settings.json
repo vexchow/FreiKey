@@ -1,6 +1,7 @@
 {
     "editor.tabSize": 2,
     "files.associations": {
+        "*.mak": "makefile",
         "__functional_03": "cpp",
         "functional": "cpp",
         "__bit_reference": "cpp",
@@ -25,6 +26,13 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "algorithm": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "__functional_base": "cpp",
+        "atomic": "cpp",
+        "bitset": "cpp",
+        "limits": "cpp",
+        "memory": "cpp",
+        "ratio": "cpp",
+        "tuple": "cpp"
     }
 }

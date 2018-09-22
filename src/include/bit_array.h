@@ -63,9 +63,14 @@ struct bit_array {
     return !!(value[bitnum >> 3] & (1 << (bitnum & 7)));
   }
 #if defined(DEBUG)
-  void dumpHex() const {
-    for (uint8_t i : this->value)
-      ::dumpHex(i);
+const char* hexstr[16] = {"0", "1", "2", "3", "4", "5", "6", "7","8","9","A","B", "C","D","E","F"};
+  void dumpHex(const char *prf) const {
+    Serial.print(prf);
+    for (uint8_t i : this->value) {
+      Serial.print(hexstr[i>>4]);
+      Serial.print(hexstr[i&15]);
+    }
+    Serial.println(prf);
   }
 #endif
 };

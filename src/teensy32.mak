@@ -27,43 +27,44 @@ RMDIR=rm -rf
 DIV=/
 endif
 
-MCU=MK20DX256
-MKU_LD=mk20dx256.ld
-
 TOOLS=${ARDUINOROOT}/hardware/tools
 AVR=${ARDUINOROOT}/hardware/teensy/avr
+
+MCU=MK20DX256
+MCU_LD=${AVR}/cores/teensy3/mk20dx256.ld
 
 # Tools (probably don't need to change these at all)
 CC=${TOOLS}/arm/bin/arm-none-eabi-gcc
 CPP=${TOOLS}/arm/bin/arm-none-eabi-g++
 OBJCOPY=${TOOLS}/arm/bin/arm-none-eabi-objcopy
 AR=${TOOLS}/arm/bin/arm-none-eabi-ar
+SIZE=${TOOLS}/arm/bin/arm-none-eabi-size
+TEENSY_FLASH=${TOOLS}/teensy_post_compile
+TEENSY_REBOOT=${TOOLS}/teensy_reboot
 
 # Flags for compilation
-# First, DEBUG and STATUS_DUMP configuration flags (then everything else)
+# First, DEBUG configuration flags (then everything else)
 # F_CPU = CPU Frequency. 96MHz! Boo yah!!!!
-DEFINES=-DDEBUG \
--DSTATUS_DUMP \
+DEFINES=-DDEBUG=2 \
 -DF_CPU=96000000 \
--DARDUINO=10805 \
--DUSB_SERIAL \
+-DARDUINO=10806 \
+-DUSB_SERIAL_HID \
 -DLAYOUT_US_ENGLISH \
--DUSING_MAKEFILE \
 -D__$(MCU)__ \
--DARDUINO_BSP_VERSION=\"${VER}\" \
 -DTEENSYDUINO=143 \
 -DTEENSY
-TARGET=-mcpu=cortex-m4 -mthumb
+
+TARGET=-mcpu=cortex-m4 -mthumb -fsingle-precision-constant
 CODEGEN=-ffunction-sections -fdata-sections
 FLAGS=-g -Wall -u _printf_float -MMD
-CPPLANG=-std=gnu++14 -w -x c++ -fno-rtti -fno-exceptions -fno-threadsafe-statics -felide-constructors
+CPPLANG=-std=gnu++14 -nostdlib -w -x c++ -fno-rtti -fno-exceptions -fno-threadsafe-statics -felide-constructors
 CLANG=-std=gnu1x
 SLANG=-x assembler-with-cpp
 OPT=-Os
 
 SHARED_SRC = dbgcfg.cpp hardware.cpp boardio.cpp debounce.cpp \
 	sleepstate.cpp
-BETTERFLY_SRC = status_dump.cpp globals.cpp betterfly.cpp scanner.cpp
+BETTERFLY_SRC = globals.cpp betterfly.cpp scanner.cpp
 USER_SRC = ${SHARED_SRC} ${BETTERFLY_SRC}
 
 INCLUDES=-Iinclude \
@@ -71,14 +72,14 @@ INCLUDES=-Iinclude \
   "-I${AVR}/libraries/SPI"\
   "-I${AVR}/libraries/Wire"\
 	"-I${GFX_ROOT}"\
-	"-I${SSD1306_ROOT}"\
-
+	"-I${SSD1306_ROOT}"
 
 ELF_FLAGS = ${OPT} ${TARGET} -save-temps \
 -Wl,--defsym=__rtc_localtime=0 \
 -Wl,--cref \
 -Wl,--check-sections \
 -Wl,--gc-sections \
+-Wl,--relax \
 -Wl,--unresolved-symbols=report-all \
 -Wl,--warn-common \
 -Wl,--warn-section-align \
@@ -104,7 +105,6 @@ GFX_OBJS = \
 SHARED_OBJS = $(addprefix ${OUT}/, $(patsubst %.cpp, %.cpp.o, ${SHARED_SRC}))
 USER_OBJS =  $(addprefix ${OUT}/, $(patsubst %.cpp, %.cpp.o, ${USER_SRC}))
 
-
 .PHONY: clean allclean depclean betterfly flash
 
 all: ${OUT} betterfly
@@ -114,7 +114,8 @@ DEPS = $(USER_OBJS:.o=.d) $(GFX_OBJS:.o=.d)
 -include ${DEPS}
 
 flash: ${OUT}/betterfly.hex
-	${NRFUTIL} --verbose dfu serial -pkg $< -p ${DPORT} -b 115200
+	${TEENSY_FLASH} -file=betterfly -path=$(abspath ${OUT}) -tools=${TOOLS}
+	${TEENSY_REBOOT}
 
 betterfly: ${OUT}/betterfly.hex
 
@@ -122,11 +123,12 @@ betterfly: ${OUT}/betterfly.hex
 $(USER_OBJS) : Makefile
 
 ${OUT}/%.hex : ${OUT}/%.elf
+	${SIZE} $<
 	${OBJCOPY} -O ihex -R .eeprom $< $@
 
 ${OUT}/betterfly.elf : ${USER_OBJS} ${GFX_OBJS} ${CORE_OBJS}
-	${CC} ${ELF_FLAGS} "-Wl,-Map,$@.map" -o $@ $^ \
-	-Wl,--start-group -lm ${ALL_LIBS} -Wl,--end-group
+	${CC} ${ELF_FLAGS} "-Wl,-Map,$@.map" -o $@ $^ -T${MCU_LD} \
+	-Wl,--start-group -lm -lstdc++ ${ALL_LIBS} -Wl,--end-group
 
 ${OUT}:
 	@-mkdir ${OUT}

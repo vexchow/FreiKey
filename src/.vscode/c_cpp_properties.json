@@ -39,7 +39,11 @@
         "${workspaceRoot}/../../Adafruit-GFX-Library"
       ],
       "adadefines": [
+        "DEBUG",
+        "LOGGING",
+        "STATUS_DUMP",
         "F_CPU=64000000",
+        "ADAFRUIT",
         "ARDUINO=10805",
         "ARDUINO_NRF52_FEATHER",
         "ARDUINO_ARCH_NRF52",
@@ -52,7 +56,8 @@
         "USE_LFXO",
         "S132",
         "SD_VER=510",
-        "CFG_DEBUG=0"
+        "CFG_DEBUG=0",
+        "__VSCODE_ONLY_"
       ],
       "defines": [
         "DEBUG",
@@ -64,6 +69,7 @@
         "LAYOUT_US_ENGLISH",
         "USING_MAKEFILE",
         "__MK20DX256__",
+        "TEENSY",
         "TEENSYDUINO=143",
         "__VSCODE_ONLY_"
       ],

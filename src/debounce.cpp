@@ -10,7 +10,7 @@ uint32_t last_reported_time[BoardIO::matrix_size] = {0};
 // I still sometimes see a bounce or two, so I've increased it a bit.
 // 25ms translates to a typing speed of about 400 WPM, which seems plenty
 // fast...
-constexpr uint8_t debounce_delay = 25;
+constexpr uint8_t debounce_delay = 30;
 
 BoardIO::bits debounce(const BoardIO::bits& cur_switches, uint32_t now) {
   BoardIO::bits reporting = cur_switches;
@@ -27,7 +27,7 @@ BoardIO::bits debounce(const BoardIO::bits& cur_switches, uint32_t now) {
       // Let's clear the change from cur_switches
       // If it's on, this will turn it off, if it's off, this will turn it on
       reporting.flip_bit(bit_num);
-      DBG(dumpVal(bit_num, "Bounce ignored "));
+      //DBG2(dumpVal(bit_num, "Bounce ignored "));
     } else {
       // We're not in the debounce period: leave the change intact, and start
       // the timer

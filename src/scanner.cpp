@@ -22,6 +22,23 @@ keystate keyStates[16];
 layer_t layer_stack[layer_max + 1];
 layer_t layer_pos = 0;
 
+#if defined(DEBUG)
+void dumpScanCode(uint8_t sc, bool pressed) {
+  Serial.print("Scan Code ");
+  Serial.print(sc, HEX);
+  Serial.print(" was ");
+  Serial.println(pressed ? "pressed" : "released");
+}
+void dumpLayers() {
+  Serial.print("Layer stack: ");
+  for (int i = 0; i <= layer_pos; i++) {
+    Serial.print(layer_stack[i]);
+    Serial.print(" ");
+  }
+  Serial.println("");
+}
+#endif
+
 // Look for a slot that is either already in use for this scan code, or vacant.
 // If we don't have a vacant slot, return the oldest, but still in use, slot,
 // but only for key-up states, as we're probably through with them anyway.
@@ -70,23 +87,6 @@ scancode_t getNextScanCode(BoardIO::bits& delta,
   pressed = curState.get_bit(sc);
   return sc;
 }
-
-#if defined(DEBUG)
-void dumpScanCode(uint8_t sc, bool pressed) {
-  Serial.print("Scan Code ");
-  Serial.print(sc, HEX);
-  Serial.print(" was ");
-  Serial.println(pressed ? "pressed" : "released");
-}
-void dumpLayers() {
-  Serial.print("Layer stack: ");
-  for (int i = 0; i <= layer_pos; i++) {
-    Serial.print(layer_stack[i]);
-    Serial.print(" ");
-  }
-  Serial.println("");
-}
-#endif
 
 void layer_push(layer_t layer) {
   DBG(dumpVal(layer, "Push "));
@@ -160,6 +160,7 @@ void preprocessScanCode(scancode_t sc, bool pressed, uint32_t now) {
 
 usb_report getUSBData(uint32_t now) {
   usb_report res;
+  memset(&res, 0, sizeof(res));
 
   for (auto& state : keyStates) {
     if (state.scanCode == 0xff)
