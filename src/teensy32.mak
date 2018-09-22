@@ -57,15 +57,14 @@ TARGET=-mcpu=cortex-m4 -mthumb
 CODEGEN=-ffunction-sections -fdata-sections
 FLAGS=-g -Wall -u _printf_float -MMD
 CPPLANG=-std=gnu++14 -w -x c++ -fno-rtti -fno-exceptions -fno-threadsafe-statics -felide-constructors
-CLANG=-std=gnu14
+CLANG=-std=gnu1x
 SLANG=-x assembler-with-cpp
 OPT=-Os
 
 SHARED_SRC = dbgcfg.cpp hardware.cpp boardio.cpp debounce.cpp \
 	sleepstate.cpp
 BETTERFLY_SRC = status_dump.cpp globals.cpp betterfly.cpp scanner.cpp
-DISP_SRC = display.cpp disp_uart.cpp
-USER_SRC = ${SHARED_SRC} ${BETTERFLY_SRC} ${DISP_SRC}
+USER_SRC = ${SHARED_SRC} ${BETTERFLY_SRC}
 
 INCLUDES=-Iinclude \
   "-I${AVR}/cores/teensy3"\
@@ -89,18 +88,20 @@ CPPFLAGS=${TARGET} ${FLAGS} ${CODEGEN} ${CPPLANG} ${DEFINES} ${OPT} ${INCLUDES}
 CFLAGS=${TARGET} ${FLAGS} ${CODEGEN} ${CLANG} ${DEFINES} ${OPT} ${INCLUDES}
 SFLAGS=${TARGET} ${FLAGS} ${CODEGEN} ${SLANG} ${DEFINES} ${OPT} ${INCLUDES}
 
+CORE_SRCS = \
+  $(wildcard ${AVR}/cores/teensy3/*.c) \
+	$(wildcard ${AVR}/cores/teensy3/*.cpp)
+
 GFX_SRCS = \
 	${SSD1306_ROOT}/Adafruit_SSD1306.cpp \
 	${GFX_ROOT}/Adafruit_GFX.cpp \
 	${GFX_ROOT}/Adafruit_SPITFT.cpp
 
+CORE_OBJS = \
+  $(addprefix ${OUT}/, $(patsubst %.c, %.c.o, $(patsubst %.cpp, %.cpp.o, $(notdir ${CORE_SRCS}))))
 GFX_OBJS = \
 	$(addprefix ${OUT}/, $(patsubst %.cpp, %.cpp.o, $(notdir ${GFX_SRCS})))
-
 SHARED_OBJS = $(addprefix ${OUT}/, $(patsubst %.cpp, %.cpp.o, ${SHARED_SRC}))
-RIGHT_OBJS = $(addprefix ${OUT}/, $(patsubst %.cpp, %.cpp.o, ${RIGHT_SRC}))
-LEFT_OBJS = $(addprefix ${OUT}/, $(patsubst %.cpp, %.cpp.o, ${LEFT_SRC}))
-DISP_OBJS = $(addprefix ${OUT}/, $(patsubst %.cpp, %.cpp.o, ${DISP_SRC}))
 USER_OBJS =  $(addprefix ${OUT}/, $(patsubst %.cpp, %.cpp.o, ${USER_SRC}))
 
 
@@ -123,7 +124,7 @@ $(USER_OBJS) : Makefile
 ${OUT}/%.hex : ${OUT}/%.elf
 	${OBJCOPY} -O ihex -R .eeprom $< $@
 
-${OUT}/betterfly.elf : ${USER_OBJS} ${GFX_OBJS}
+${OUT}/betterfly.elf : ${USER_OBJS} ${GFX_OBJS} ${CORE_OBJS}
 	${CC} ${ELF_FLAGS} "-Wl,-Map,$@.map" -o $@ $^ \
 	-Wl,--start-group -lm ${ALL_LIBS} -Wl,--end-group
 
@@ -149,3 +150,9 @@ ${OUT}/%.cpp.o: ${GFX_ROOT}/%.cpp
 
 ${OUT}/%.cpp.o: ${SSD1306_ROOT}/%.cpp
 	${CPP} -c ${CPPFLAGS} -o $@ $<
+
+${OUT}/%.cpp.o: ${AVR}/cores/teensy3/%.cpp
+	${CPP} -c ${CPPFLAGS} -o $@ $<
+
+${OUT}/%.c.o: ${AVR}/cores/teensy3/%.c
+	${CC} -c ${CFLAGS} -o $@ $<
