@@ -3,6 +3,7 @@
 #include "callbacks.h"
 #include "globals.h"
 #include "right-master.h"
+#include "sleepstate.h"
 
 namespace callback {
 

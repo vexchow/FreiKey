@@ -15,4 +15,6 @@ struct SleepState {
   void EndForcedSleepMode();
 };
 
+extern SleepState sleepState;
+
 #endif

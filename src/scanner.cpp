@@ -138,7 +138,7 @@ void preprocessScanCode(scancode_t sc, bool pressed, uint32_t now) {
   DBG2(dumpScanCode(sc, pressed));
   // Get a state slot for this scan code
   keystate* state = findStateSlot(sc);
-  state->dump();
+  DBG(state->dump());
   if (!state) {
     // If this is a keydown and we don't have an available state slot just
     // ignore it. If we chose to toss out older keydowns instead, things could

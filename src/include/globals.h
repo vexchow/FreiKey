@@ -3,7 +3,6 @@
 
 #include "sysstuff.h"
 
-#include "sleepstate.h"
 #include "hardware.h"
 
 #if defined(ADAFRUIT)
@@ -16,7 +15,5 @@ extern state::hw rightSide;
 
 extern uint16_t core_handle;
 #endif
-
-extern SleepState sleepState;
 
 #endif

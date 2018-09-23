@@ -76,6 +76,8 @@ void updateBatteryLevel(const state::hw& downLeft, const state::hw& downRight) {
   }
 }
 
+SleepState sleepState = {0, false, true};
+
 void loop() {
   uint32_t now = millis();
 

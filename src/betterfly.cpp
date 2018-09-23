@@ -9,7 +9,6 @@
 #include "keystate.h"
 #include "led_states.h"
 #include "scanner.h"
-#include "sleepstate.h"
 #include "usb_keyboard.h"
 
 constexpr BoardIO Betterfly = {{1, 0, 13, 2, 10, 11, 9, 20, 3, 14, 5, 4},
@@ -40,13 +39,6 @@ extern "C" void loop() {
 
   // Get the hardware state for the two sides...
   state::hw down{now, bfState, Betterfly};
-
-  // For sleeping, look at both sides of the keyboard
-  if (sleepState.CheckForSleeping(down.switches.any(), now, Betterfly)) {
-    // I'm assuming this saves power. If it doesn't, there's no point...
-    delay(250);
-    return;
-  }
 
   // Get the before & after of each side into a 64 bit value
   BoardIO::bits before = bfState.switches;
