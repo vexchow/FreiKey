@@ -7,7 +7,7 @@
       "label": "Build",
       "type": "shell",
       "command": "make -j",
-      "problemMatcher": ["$gcc"],
+      "problemMatcher": "$gcc",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -17,19 +17,43 @@
       "label": "Clean",
       "type": "shell",
       "command": "make allclean",
-      "problemMatcher": ["$gcc"]
+      "problemMatcher": "$gcc",
+      "group": "build"
     },
     {
-      "label": "Flash Right",
+      "label": "Flash Betterfly",
       "type": "shell",
-      "command": "make flashr",
-      "problemMatcher": ["$gcc"]
+      "command": "make -j -f teensy32.mak flash",
+      "problemMatcher": "$gcc",
+      "group": "build"
     },
     {
-      "label": "Flash Left",
+      "label": "Set to Teensy",
       "type": "shell",
-      "command": "make flashl",
-      "problemMatcher": ["$gcc"]
+      "command": "rm Makefile ; ln -s teensy32.mak Makefile",
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "Set to Adafruit",
+      "type": "shell",
+      "command": "rm Makefile ; ln -s adafruit.mak Makefile",
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "Flash Adafruit Right",
+      "type": "shell",
+      "command": "make -f adafruit.mak flashr",
+      "problemMatcher": "$gcc",
+      "group": "build"
+    },
+    {
+      "label": "Flash Adafruit Left",
+      "type": "shell",
+      "command": "make -f adafruit.mak flashl",
+      "problemMatcher": "$gcc",
+      "group": "build"
     }
   ]
 }

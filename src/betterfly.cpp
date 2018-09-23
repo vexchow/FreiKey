@@ -23,13 +23,17 @@ void resetTheWorld() {
   layer_stack[0] = 0;
   memset(&bfState, 0, sizeof(bfState));
   memset(keyStates, 0xff, sizeof(keyStates));
-
-  // TOOD: hid.keyRelease();
 }
 
 extern "C" void setup() {
   DBG(Serial.begin(115200));
   DBG(Serial.println("SETUP!"));
+  // Blink a bit, just for funsies...
+  pinMode(13, OUTPUT);
+  for (int i = 0; i < 10; i++) {
+    digitalWrite(13, (i & 1) ? HIGH : LOW);
+    delay(100);
+  }
   Betterfly.Configure();
   resetTheWorld();
 }
@@ -58,7 +62,7 @@ extern "C" void loop() {
       DBG(dumpHex(keyCode, "Pressing  code  #"));
       Keyboard.press(keyCode);
     } else {
-      DBG(dumpHex(keyCode, "Releaseing code #"));
+      DBG(dumpHex(keyCode, "Releasing code #"));
       Keyboard.release(keyCode);
     }
     // preprocessScanCode(sc, pressed, now);

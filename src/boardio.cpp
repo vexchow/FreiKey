@@ -3,6 +3,18 @@
 #include "boardio.h"
 #include "dbgcfg.h"
 
+#if defined(TEENSY) || defined(FLIP_PIN_MODE)
+// This configuration make sit so the Teensy LED (on pin 13)
+// doesn't stay lit 99.999% of the time...
+#define configPin(pin) pinMode(pin, INPUT)
+#define prepPinForRead(pin) pinMode(pin, OUTPUT); digitalWrite(pin, LOW)
+#define completePin(pin) pinMode(pin, INPUT)
+#else
+#define configPin(pin) pinMode(pin, OUTPUT); digitalWrite(pin, HIGH)
+#define prepPinForRead(pin) digitalWrite(pin, LOW)
+#define completePin(pin) digitalWrite(pin, HIGH)
+#endif
+
 void BoardIO::Configure() const {
 #if defined(HAS_BATTERY)
   analogReference(AR_INTERNAL_3_0);
@@ -12,15 +24,13 @@ void BoardIO::Configure() const {
 
   // For my wiring, the columns are output, and the rows are input...
   for (auto pin : cols) {
-    pinMode(pin, OUTPUT);
-    digitalWrite(pin, HIGH);
+    configPin(pin);
   }
   for (auto pin : rows) {
     pinMode(pin, INPUT_PULLUP);
   }
 #if defined(HAS_LED)
   pinMode(led, OUTPUT);
-
   analogWrite(led, 0);
 #endif
 }
@@ -28,14 +38,14 @@ void BoardIO::Configure() const {
 BoardIO::bits BoardIO::Read() const {
   BoardIO::bits switches;
   for (uint8_t colNum = 0; colNum < numcols; ++colNum) {
-    digitalWrite(cols[colNum], LOW);
+    prepPinForRead(cols[colNum]);
     delay(1);
     for (uint8_t rowNum = 0; rowNum < numrows; ++rowNum) {
       if (!digitalRead(rows[rowNum])) {
         switches.set_bit(colNum + rowNum * numcols);
       }
     }
-    digitalWrite(cols[colNum], HIGH);
+    completePin(cols[colNum]);
   }
   return switches;
 }

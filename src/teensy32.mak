@@ -32,7 +32,6 @@ AVR=${ARDUINOROOT}/hardware/teensy/avr
 
 MCU=MK20DX256
 MCU_LD=${AVR}/cores/teensy3/mk20dx256.ld
-
 # Tools (probably don't need to change these at all)
 CC=${TOOLS}/arm/bin/arm-none-eabi-gcc
 CPP=${TOOLS}/arm/bin/arm-none-eabi-g++
@@ -44,9 +43,10 @@ TEENSY_REBOOT=${TOOLS}/teensy_reboot
 
 # Flags for compilation
 # First, DEBUG configuration flags (then everything else)
-# F_CPU = CPU Frequency. 96MHz! Boo yah!!!!
-DEFINES=-DDEBUG=2 \
--DF_CPU=96000000 \
+# F_CPU = CPU Frequency. 96, 72, 48, 24 all work
+# Docs say if I slow it down to 16, USB stops working...
+DEFINES=\
+-DF_CPU=24000000 \
 -DARDUINO=10806 \
 -DUSB_SERIAL_HID \
 -DLAYOUT_US_ENGLISH \
