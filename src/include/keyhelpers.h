@@ -7,21 +7,21 @@
 
 using action_t = uint32_t;
 
-constexpr action_t kMask = 0xf00;
-constexpr action_t kKeyPress = 0x100;
-constexpr action_t kModifier = 0x200;
-constexpr action_t kTapHold = 0x300;
-constexpr action_t kToggleMod = 0x400;
-constexpr action_t kKeyAndMod = 0x500;
+constexpr action_t kMask = 0xf0000;
+constexpr action_t kKeyPress = 0x10000;
+constexpr action_t kModifier = 0x20000;
+constexpr action_t kTapHold = 0x30000;
+constexpr action_t kToggleMod = 0x40000;
+constexpr action_t kKeyAndMod = 0x50000;
 // This works like a shift key for a layer
-constexpr action_t kLayerShift = 0x600;
+constexpr action_t kLayerShift = 0x60000;
 // This turns the layer on or off
-constexpr action_t kLayerToggle = 0x700;
+constexpr action_t kLayerToggle = 0x70000;
 // This switches the current layer to the new one
-constexpr action_t kLayerSwitch = 0x800;
+constexpr action_t kLayerSwitch = 0x80000;
 
 // This is for flagging consumer keycodes, as I have to handle them differently
-constexpr action_t kConsumer = 0x8000;
+constexpr action_t kConsumer = 0x800000;
 
 using layer_t = uint8_t;
 constexpr layer_t kPushLayer = 1;
@@ -78,6 +78,7 @@ constexpr layer_t kSwitchLayer = 4;
 #define LYR_SHIFT(n) kLayerShift | n
 #define LYR_SET(n) kLayerSwitch | n
 
+#if defined(ADAFRUIT)
 #define LROW1(l00, l01, l02, l03, l04, l05) ___, l05, l04, l03, l02, l01, l00
 #define LROW2(l10, l11, l12, l13, l14, l15) ___, l15, l14, l13, l12, l11, l10
 #define LROW3(l20, l21, l22, l23, l24, l25) ___, l25, l24, l23, l22, l21, l20
@@ -95,7 +96,22 @@ constexpr layer_t kSwitchLayer = 4;
   r45, r44, r43, r42, r41, r40, rt40
 #define RROW6(rt50, rt51, r51, r52, r53, r54) \
   ___, r54, r53, r52, r51, rt51, rt50
+#elif defined(TEENSY)
+#define LROW1(l00, l01, l02, l03, l04, l05) l05, l04, l03, l02, l01, l00
+#define LROW2(l10, l11, l12, l13, l14, l15) l15, l14, l13, l12, l11, l10
+#define LROW3(l20, l21, l22, l23, l24, l25) l25, l24, l23, l22, l21, l20
+#define LROW4(l30, l31, l32, l33, l34, l35) l35, l34, l33, l32, l31, l30
+#define LROW5(l40, l41, l42, l43, l44, l45) l45, l44, l43, l42, l41, l40
+#define LROW6(l51, l52, l53, l54, lt55) lt55, l54, l53, l52, l51, ___
 
+#define RROW1(r00, r01, r02, r03, r04, r05) r05, r04, r03, r02, r01, r00
+#define RROW2(r10, r11, r12, r13, r14, r15) r15, r14, r13, r12, r11, r10
+#define RROW3(r20, r21, r22, r23, r24, r25) r25, r24, r23, r22, r21, r20
+#define RROW4(r30, r31, r32, r33, r34, r35) r35, r34, r33, r32, r31, r30
+#define RROW5(r40, r41, r42, r43, r44, r45) r45, r44, r43, r42, r41, r40
+#define RROW6(rt50, r51, r52, r53, r54) r54, r53, r52, r51, rt50, ___
+
+#endif
 // Some missing keycodes from the Arduino/AdaFruit API's that I need. You can
 // find these from the QMK firmware HIDClassCommon.h file. I also find them in
 // IOHIDUsageTable.h from the IOHIDFamily source code available at
@@ -118,10 +134,10 @@ DK(M_LOCK, 0xF9)
 
 // Let's mac-friendly-ify this stuff:
 
-#define LEFTOPTION  LEFTALT
+#define LEFTOPTION LEFTALT
 #define RIGHTOPTION RIGHTALT
 #define LEFTCOMMAND LEFTGUI
-#define RIGHTCOMMAND  RIGHTGUI
+#define RIGHTCOMMAND RIGHTGUI
 
 // Some stuff to make the action maps prettier. I use Clang Format, and it
 // messes up the keymaps badly if they're over 80 characters on any individual

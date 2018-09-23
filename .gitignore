@@ -33,3 +33,6 @@
 
 # Custom
 src/out
+src/teensy
+src/ada
+src/Makefile

@@ -64,7 +64,7 @@ struct keystate* findStateSlot(uint8_t scanCode) {
     }
   }
   if (vacant) {
-    return vacant;
+    reap = vacant;
   }
   return reap;
 }
@@ -75,6 +75,8 @@ action_t resolveActionForScanCodeOnActiveLayer(uint8_t scanCode) {
   while (s > 0 && keymap[layer_stack[s]][scanCode] == ___) {
     --s;
   }
+  Serial.println("Resolving action to this:");
+  dumpHex(keymap[layer_stack[s]][scanCode]);
   return keymap[layer_stack[s]][scanCode];
 }
 
@@ -134,6 +136,7 @@ void preprocessScanCode(scancode_t sc, bool pressed, uint32_t now) {
   DBG2(dumpScanCode(sc, pressed));
   // Get a state slot for this scan code
   keystate* state = findStateSlot(sc);
+  state->dump();
   if (!state) {
     // If this is a keydown and we don't have an available state slot just
     // ignore it. If we chose to toss out older keydowns instead, things could
@@ -165,9 +168,11 @@ usb_report getUSBData(uint32_t now) {
   for (auto& state : keyStates) {
     if (state.scanCode == 0xff)
       continue;
+    DBG(state.dump());
     if ((state.action & kConsumer) == kConsumer) {
+      DBG(Serial.println("Got a consumer action"));
       if (res.consumer) {
-        DBG("Trying to press multiple consumer keys at once.");
+        DBG(Serial.println("Trying to press multiple consumer keys at once."));
       }
       // For a consumer control button, there are no modifiers, it's
       // just a simple call. So just call it directly:

@@ -39,6 +39,8 @@ struct keystate {
       lastChange = now;
       if (pressed) {
         action = resolveActionForScanCodeOnActiveLayer(scanCode);
+      } else {
+        action = 0;
       }
     }
     switch (action & kMask) {
