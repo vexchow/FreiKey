@@ -5,6 +5,9 @@
 #include "globals.h"
 #include "hardware.h"
 #include "helpers.h"
+#include "keymap.h"
+#include "keystate.h"
+#include "led_states.h"
 #include "scanner.h"
 #include "sleepstate.h"
 #include "usb_keyboard.h"
@@ -81,16 +84,16 @@ extern "C" void loop() {
     if (r.consumer) {
       if (r.consumer > 0) {
         DBG2(dumpHex(r.consumer, "Consumer key press: "));
-        //Keyboard.press(r.consumer);
+        // Keyboard.press(r.consumer);
       } else {
         DBG2(dumpHex(r.consumer, "Consumer key release: "));
-        //Keyboard.release(-r.consumer);
+        // Keyboard.release(-r.consumer);
       }
     }
     if (r.repsize) {
-      //memcpy(keyboard_keys, r.report, sizeof(keyboard_keys));
-      //keyboard_modifier_keys = r.mods;
-      //usb_keyboard_send();
+      // memcpy(keyboard_keys, r.report, sizeof(keyboard_keys));
+      // keyboard_modifier_keys = r.mods;
+      // usb_keyboard_send();
       DBG2(Serial.println("============================="));
       DBG2(down.dump());
     }

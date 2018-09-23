@@ -27,7 +27,7 @@ BoardIO::bits debounce(const BoardIO::bits& cur_switches, uint32_t now) {
       // Let's clear the change from cur_switches
       // If it's on, this will turn it off, if it's off, this will turn it on
       reporting.flip_bit(bit_num);
-      //DBG2(dumpVal(bit_num, "Bounce ignored "));
+      DBG(dumpVal(bit_num, "Bounce ignored "));
     } else {
       // We're not in the debounce period: leave the change intact, and start
       // the timer
