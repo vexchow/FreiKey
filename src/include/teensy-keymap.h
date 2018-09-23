@@ -27,17 +27,17 @@ const char* layer_names[] = {
 //          Layer change (latch, lock, or shift)
 
 const action_t keymap[][BoardIO::matrix_size] = {
-    {// LAYER_MAC_BASE (0)
+    {// LAYER_MAC_BASE (0) // LROW3:RCMD=>MAC_CAP, RROW5:CTRL=>LYR_WIN
      LROW1(KEY(ESCAPE), KEY(1), KEY(2), KEY(3), KEY(4), KEY(5)),
      RROW1(KEY(6), KEY(7), KEY(8), KEY(9), KEY(0), KEY(MINUS)),
      LROW2(KEY(TAB), KEY(Q), KEY(W), KEY(E), KEY(R), KEY(T)),
      RROW2(KEY(Y), KEY(U), KEY(I), KEY(O), KEY(P), KEY(BACKSLASH)),
-     LROW3(MAC_CAP, KEY(A), KEY(S), KEY(D), KEY(F), KEY(G)),
+     LROW3(RCMD, KEY(A), KEY(S), KEY(D), KEY(F), KEY(G)),
      RROW3(KEY(H), KEY(J), KEY(K), KEY(L), SEMI_, QUOTE_),
      LROW4(LSHFT, KEY(Z), KEY(X), KEY(C), KEY(V), KEY(B)),
      RROW4(KEY(N), KEY(M), COMMA_, DOT_, KEY(SLASH), RSHFT),
      LROW5(LCTL, LOPT, LCMD, KEY(PGUP), KEY(GRAVE), KEY(BKSP)),
-     RROW5(SPACE_, EQ_, UP_, KEY(OBRC), LYR_WIN, KEY(CBRC)),
+     RROW5(SPACE_, EQ_, UP_, KEY(OBRC), RCTL, KEY(CBRC)),
      LROW6(PLAY_, KEY(HOME), KEY(PGDN), KEY(END), KEY(DEL)),
      RROW6(ENTER_, LEFT_, DOWN_, RIGHT_, ROPT)},
 

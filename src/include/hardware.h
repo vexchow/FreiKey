@@ -6,13 +6,16 @@
 #include "boardio.h"
 #include "dbgcfg.h"
 
-using scancode_t = uint8_t;
+using scancode_t = uint16_t;
+constexpr scancode_t null_scan_code = 0xffff;
 
+#if defined(ADAFRUIT)
 constexpr char* MANUFACTURER = "FreikyStuff";
 constexpr char* MODEL = "FreiKeyboard";
 constexpr char* BT_NAME = "FreiKeys";
 constexpr char* HW_REV = "0001";
 constexpr char* LHS_NAME = "FreiKeys-Slave";
+#endif
 
 namespace state {
 

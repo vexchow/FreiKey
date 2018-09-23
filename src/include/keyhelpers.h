@@ -23,6 +23,14 @@ constexpr action_t kLayerSwitch = 0x80000;
 // This is for flagging consumer keycodes, as I have to handle them differently
 constexpr action_t kConsumer = 0x800000;
 
+inline action_t getModifiers(action_t a) {
+  return a & kMask;
+}
+
+inline action_t getKeystroke(action_t a) {
+  return a & 0xFFFF;
+}
+
 using layer_t = uint8_t;
 constexpr layer_t kPushLayer = 1;
 constexpr layer_t kPopLayer = 2;
@@ -97,20 +105,19 @@ constexpr layer_t kSwitchLayer = 4;
 #define RROW6(rt50, rt51, r51, r52, r53, r54) \
   ___, r54, r53, r52, r51, rt51, rt50
 #elif defined(TEENSY)
-#define LROW1(l00, l01, l02, l03, l04, l05) l05, l04, l03, l02, l01, l00
-#define LROW2(l10, l11, l12, l13, l14, l15) l15, l14, l13, l12, l11, l10
-#define LROW3(l20, l21, l22, l23, l24, l25) l25, l24, l23, l22, l21, l20
-#define LROW4(l30, l31, l32, l33, l34, l35) l35, l34, l33, l32, l31, l30
-#define LROW5(l40, l41, l42, l43, l44, l45) l45, l44, l43, l42, l41, l40
-#define LROW6(l51, l52, l53, l54, lt55) lt55, l54, l53, l52, l51, ___
+#define LROW1(l00, l01, l02, l03, l04, l05) l00, l01, l02, l03, l04, l05
+#define LROW2(l10, l11, l12, l13, l14, l15) l10, l11, l12, l13, l14, l15
+#define LROW3(l20, l21, l22, l23, l24, l25) l20, l21, l22, l23, l24, l25
+#define LROW4(l30, l31, l32, l33, l34, l35) l30, l31, l32, l33, l34, l35
+#define LROW5(l40, l41, l42, l43, l44, l45) l40, l41, l42, l43, l44, l45
+#define LROW6(l51, l52, l53, l54, lt55) ___, l51, l52, l53, l54, lt55
 
-#define RROW1(r00, r01, r02, r03, r04, r05) r05, r04, r03, r02, r01, r00
-#define RROW2(r10, r11, r12, r13, r14, r15) r15, r14, r13, r12, r11, r10
-#define RROW3(r20, r21, r22, r23, r24, r25) r25, r24, r23, r22, r21, r20
-#define RROW4(r30, r31, r32, r33, r34, r35) r35, r34, r33, r32, r31, r30
-#define RROW5(r40, r41, r42, r43, r44, r45) r45, r44, r43, r42, r41, r40
-#define RROW6(rt50, r51, r52, r53, r54) r54, r53, r52, r51, rt50, ___
-
+#define RROW1(r00, r01, r02, r03, r04, r05) r00, r01, r02, r03, r04, r05
+#define RROW2(r10, r11, r12, r13, r14, r15) r10, r11, r12, r13, r14, r15
+#define RROW3(r20, r21, r22, r23, r24, r25) r20, r21, r22, r23, r24, r25
+#define RROW4(r30, r31, r32, r33, r34, r35) r30, r31, r32, r33, r34, r35
+#define RROW5(r40, r41, r42, r43, r44, r45) r40, r41, r42, r43, r44, r45
+#define RROW6(rt50, r51, r52, r53, r54) rt50, r51, r52, r53, r54, ___
 #endif
 // Some missing keycodes from the Arduino/AdaFruit API's that I need. You can
 // find these from the QMK firmware HIDClassCommon.h file. I also find them in
@@ -118,8 +125,8 @@ constexpr layer_t kSwitchLayer = 4;
 // www.opensource.apple.com. I'm pretty sure similar stuff is available for
 // Windows, too, somewhere (probably in MSDN docs)
 
-#define DK(a, v) constexpr uint16_t PK(a) = v;
-#define DM(a, v) constexpr uint16_t PM(a) = PM(v);
+#define DK(a, v) constexpr action_t PK(a) = v;
+#define DM(a, v) constexpr action_t PM(a) = PM(v);
 DK(M_PLAY, 0xCD)
 DK(M_PREVIOUS_TRACK, 0xB6)
 DK(M_NEXT_TRACK, 0xB5)

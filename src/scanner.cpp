@@ -42,7 +42,7 @@ void dumpLayers() {
 // Look for a slot that is either already in use for this scan code, or vacant.
 // If we don't have a vacant slot, return the oldest, but still in use, slot,
 // but only for key-up states, as we're probably through with them anyway.
-struct keystate* findStateSlot(uint8_t scanCode) {
+struct keystate* findStateSlot(scancode_t scanCode) {
   keystate *vacant = nullptr, *reap = nullptr;
   for (auto& s : keyStates) {
     // If we have the same scan code, huzzah!
@@ -51,7 +51,7 @@ struct keystate* findStateSlot(uint8_t scanCode) {
     }
     // If we found a vacancy, potentially use it. We have to keep looking to see
     // if we have the same scan code, though.
-    if (s.scanCode == 0xff) {
+    if (s.scanCode == null_scan_code) {
       vacant = &s;
     } else if (!s.down) {
       if (!reap) {
@@ -75,8 +75,10 @@ action_t resolveActionForScanCodeOnActiveLayer(uint8_t scanCode) {
   while (s > 0 && keymap[layer_stack[s]][scanCode] == ___) {
     --s;
   }
+#if defined(DEBUG)
   Serial.println("Resolving action to this:");
   dumpHex(keymap[layer_stack[s]][scanCode]);
+#endif
   return keymap[layer_stack[s]][scanCode];
 }
 
@@ -166,7 +168,7 @@ usb_report getUSBData(uint32_t now) {
   memset(&res, 0, sizeof(res));
 
   for (auto& state : keyStates) {
-    if (state.scanCode == 0xff)
+    if (state.scanCode == null_scan_code)
       continue;
     DBG(state.dump());
     if ((state.action & kConsumer) == kConsumer) {
@@ -181,7 +183,7 @@ usb_report getUSBData(uint32_t now) {
         // We have to clear this thing out when we're done, because we take
         // action on the key release as well. We don't do this for the normal
         // keyboardReport.
-        state.scanCode = 0xff;
+        state.scanCode = null_scan_code;
       }
     } else if (state.down) {
       uint8_t key;

@@ -60,9 +60,21 @@ extern "C" void loop() {
     scancode_t sc;
     bool pressed;
     sc = getNextScanCode(delta, after, pressed);
-    preprocessScanCode(sc, pressed, now);
+    action_t action = keymap[0][sc];
+    action_t keyCode = getKeystroke(action);
+    if (pressed) {
+      DBG(dumpHex(keyCode, "Pressing  code  #"));
+      Keyboard.press(keyCode);
+    } else {
+      DBG(dumpHex(keyCode, "Releaseing code #"));
+      Keyboard.release(keyCode);
+    }
+    // preprocessScanCode(sc, pressed, now);
   }
+  // Update the hardware previous state
+  bfState = down;
 
+#if false
   if (keysChanged) {
     usb_report r = getUSBData(now);
 #if defined(DEBUG) && DEBUG > 1
@@ -76,9 +88,6 @@ extern "C" void loop() {
     }
     dumpHex(r.consumer, "Consumer:");
 #endif
-
-    // Update the hardware previous state
-    bfState = down;
 
     // Handle the consumer stuff:
     if (r.consumer) {
@@ -98,4 +107,5 @@ extern "C" void loop() {
       DBG2(down.dump());
     }
   }
+#endif
 }
