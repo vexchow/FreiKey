@@ -1,4 +1,7 @@
 #include "sysstuff.h"
+#include "usb_keyboard.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
 #include "boardio.h"
 #include "dbgcfg.h"
@@ -9,10 +12,13 @@
 #include "keystate.h"
 #include "led_states.h"
 #include "scanner.h"
-#include "usb_keyboard.h"
 
 constexpr BoardIO Betterfly = {{1, 0, 13, 2, 10, 11, 9, 20, 3, 14, 5, 4},
                                {23, 22, 21, 17, 16, 15}};
+Adafruit_SSD1306 display(12); // The reset switch on the OLED is pin 12
+#if (SSD1306_LCDHEIGHT != 32)
+#error "OLED height is wrong: ARGH!"
+#endif
 
 state::hw bfState;
 
@@ -28,11 +34,13 @@ void resetTheWorld() {
 extern "C" void setup() {
   DBG(Serial.begin(115200));
   DBG(Serial.println("SETUP!"));
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.display();
   // Blink a bit, just for funsies...
   pinMode(13, OUTPUT);
-  for (int i = 0; i < 10; i++) {
-    digitalWrite(13, (i & 1) ? HIGH : LOW);
-    delay(100);
+  for (int i = 0; i < 64; i++) {
+    digitalWrite(13, ((i & 7) == 7) ? HIGH : LOW);
+    delay(8);
   }
   Betterfly.Configure();
   resetTheWorld();
@@ -49,13 +57,9 @@ extern "C" void loop() {
   BoardIO::bits after = down.switches;
 
   // Pseudo-code for what I'm looking to clean up:
-  BoardIO::bits delta = before.delta(after);
-  bool keysChanged = delta.any();
-
-  while (delta.any()) {
-    scancode_t sc;
+  for (BoardIO::bits delta = before.delta(after); delta.any();) {
     bool pressed;
-    sc = getNextScanCode(delta, after, pressed);
+    scancode_t sc = getNextScanCode(delta, after, pressed);
     action_t action = keymap[0][sc];
     action_t keyCode = getKeystroke(action);
     if (pressed) {

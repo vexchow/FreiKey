@@ -90,7 +90,9 @@ SFLAGS=${TARGET} ${FLAGS} ${CODEGEN} ${SLANG} ${DEFINES} ${OPT} ${INCLUDES}
 
 CORE_SRCS = \
   $(wildcard ${AVR}/cores/teensy3/*.c) \
-	$(wildcard ${AVR}/cores/teensy3/*.cpp)
+	$(wildcard ${AVR}/cores/teensy3/*.cpp) \
+  $(wildcard ${AVR}/libraries/SPI/*.cpp) \
+  $(wildcard ${AVR}/libraries/Wire/*.cpp)
 
 GFX_SRCS = \
 	${SSD1306_ROOT}/Adafruit_SSD1306.cpp \
@@ -153,6 +155,12 @@ ${OUT}/%.cpp.o: ${SSD1306_ROOT}/%.cpp
 	${CPP} -c ${CPPFLAGS} -o $@ $<
 
 ${OUT}/%.cpp.o: ${AVR}/cores/teensy3/%.cpp
+	${CPP} -c ${CPPFLAGS} -o $@ $<
+
+${OUT}/%.cpp.o: ${AVR}/libraries/SPI/%.cpp
+	${CPP} -c ${CPPFLAGS} -o $@ $<
+
+${OUT}/%.cpp.o: ${AVR}/libraries/Wire/%.cpp
 	${CPP} -c ${CPPFLAGS} -o $@ $<
 
 ${OUT}/%.c.o: ${AVR}/cores/teensy3/%.c
