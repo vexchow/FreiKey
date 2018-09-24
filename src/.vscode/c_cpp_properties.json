@@ -76,9 +76,9 @@
    {
       "name": "Mac-Teensy",
       "includePath": [
-        "/Applicatoins/Arduino.app/Contents/Java/hardware/teensy/avr/cores/teensy3",
-        "/Applicatoins/Arduino.app/Contents/Java/hardware/teensy/avr/libraries/SPI",
-        "/Applicatoins/Arduino.app/Contents/Java/hardware/teensy/avr/libraries/Wire",
+        "/Applications/Arduino.app/Contents/Java/hardware/teensy/avr/cores/teensy3",
+        "/Applications/Arduino.app/Contents/Java/hardware/teensy/avr/libraries/SPI",
+        "/Applications/Arduino.app/Contents/Java/hardware/teensy/avr/libraries/Wire",
         "/Applications/Arduino.app/Contents/Java/hardware/tools/arm/arm-none-eabi/include",
         "${workspaceRoot}/include/",
         "${workspaceRoot}/../../Adafruit_SSD1306",
