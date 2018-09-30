@@ -12,9 +12,11 @@ struct bit_array {
   constexpr static uint32_t num_bits = T;
   constexpr static uint32_t num_bytes = (T + 7) / 8;
   uint8_t value[num_bytes];
+
   bit_array() {
     memset(&value[0], 0, sizeof(value));
   }
+
   bit_array(std::initializer_list<uint8_t> init) {
     int num = 0;
     for (uint8_t a : init) {
@@ -24,12 +26,15 @@ struct bit_array {
       value[num++] = a;
     }
   }
+
   bit_array(const bit_array& m) {
     memcpy(&value[0], &m.value[0], sizeof(value));
   }
+
   bool operator==(const bit_array& m) const {
     return !memcmp(&value[0], &m.value[0], sizeof(value));
   }
+
   bit_array<T> delta(const bit_array& compare) const {
     bit_array<T> v{};
     for (size_t i = 0; i < sizeof(value); i++) {
@@ -37,6 +42,7 @@ struct bit_array {
     }
     return v;
   }
+
   bool any() const {
     for (uint8_t i : value) {
       if (i)
@@ -44,6 +50,7 @@ struct bit_array {
     }
     return false;
   }
+
   uint8_t pull_a_bit() {
     for (int i = 0; i < sizeof(value); i++) {
       if (value[i]) {
@@ -53,22 +60,42 @@ struct bit_array {
       }
     }
   }
+
   void flip_bit(uint8_t bitnum) {
     value[bitnum >> 3] ^= 1 << (bitnum & 7);
   }
+
   void set_bit(uint8_t bitnum) {
     value[bitnum >> 3] |= 1 << (bitnum & 7);
   }
+
   bool get_bit(uint8_t bitnum) const {
     return !!(value[bitnum >> 3] & (1 << (bitnum & 7)));
   }
+
 #if defined(DEBUG)
-const char* hexstr[16] = {"0", "1", "2", "3", "4", "5", "6", "7","8","9","A","B", "C","D","E","F"};
-  void dumpHex(const char *prf) const {
+  const char* hexstr[16] = {"0",
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9",
+                            "A",
+                            "B",
+                            "C",
+                            "D",
+                            "E",
+                            "F"};
+
+  void dumpHex(const char* prf) const {
     Serial.print(prf);
     for (uint8_t i : this->value) {
-      Serial.print(hexstr[i>>4]);
-      Serial.print(hexstr[i&15]);
+      Serial.print(hexstr[i >> 4]);
+      Serial.print(hexstr[i & 15]);
     }
     Serial.println(prf);
   }

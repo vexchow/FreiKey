@@ -1,5 +1,6 @@
 #if !defined(CALLBACKS_H)
 #define CALLBACKS_H
+#if defined(ADAFRUIT)
 
 #include <ble_gap.h>
 
@@ -13,4 +14,5 @@ void core_disconnect(uint16_t conn_handle, uint8_t reason);
 void scan(ble_gap_evt_adv_report_t* report);
 } // namespace callback
 
+#endif
 #endif

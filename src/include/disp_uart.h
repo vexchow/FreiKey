@@ -3,7 +3,7 @@
 
 #include "sysstuff.h"
 
-#include "disp_globals.h"
+#include "disp_gfx.h"
 
 // The keyboard can send three messages, each of which also includes a
 // length of time (in seconds) to display the message
@@ -16,12 +16,11 @@
 //  and a 32 bit value
 
 namespace disp_uart {
-
+#if defined(HAS_BATTERY)
 uint8_t encodeBatteryValue(uint8_t chargeRemaining,
                            bool isCharging,
                            bool isPresent);
-void drawBattery(uint8_t rate, uint8_t x, uint8_t y);
-void drawLayer(uint8_t lyr, uint8_t x, uint8_t y);
+#endif
 enum class header : uint8_t { status = 1, string, value };
 
 template <typename T, header V>

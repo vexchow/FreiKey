@@ -7,16 +7,16 @@
 class BoardIO {
  public:
 #if defined(TEENSY)
-  static const uint8_t numcols = 12;
+  static const uint8_t ncols = 12;
 #elif defined(ADAFRUIT)
-  static const uint8_t numcols = 7;
+  static const uint8_t ncols = 7;
 #endif
-  static const uint8_t numrows = 6;
-  static const uint8_t matrix_size = numcols * numrows;
+  static const uint8_t nrows = 6;
+  static const uint8_t matrix_size = ncols * nrows;
   typedef bit_array<matrix_size> bits;
 
-  uint8_t cols[numcols];
-  uint8_t rows[numrows];
+  uint8_t cols[ncols];
+  uint8_t rows[nrows];
   #if defined(HAS_LED)
   uint8_t led;
   void setLED(uint32_t brightness) const;

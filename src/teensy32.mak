@@ -62,7 +62,7 @@ CLANG=-std=gnu1x
 SLANG=-x assembler-with-cpp
 OPT=-Os
 
-SHARED_SRC = dbgcfg.cpp hardware.cpp boardio.cpp debounce.cpp
+SHARED_SRC = dbgcfg.cpp hardware.cpp boardio.cpp debounce.cpp disp_gfx.cpp
 BETTERFLY_SRC = globals.cpp betterfly.cpp scanner.cpp
 USER_SRC = ${SHARED_SRC} ${BETTERFLY_SRC}
 

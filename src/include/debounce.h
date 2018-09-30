@@ -1,5 +1,6 @@
 #if !defined(DEBOUNCE_H)
 #define DEBOUNCE_H
+
 #include "bit_array.h"
 #include "boardio.h"
 

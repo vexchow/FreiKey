@@ -1,8 +1,8 @@
 #if !defined(KEYMAP_H)
 #define KEYMAP_H
 
-#include "keyhelpers.h"
 #include "boardio.h"
+#include "keyhelpers.h"
 
 #if defined(STATUS_DUMP)
 // For the status dumper thingamajig
@@ -25,6 +25,114 @@ const char* layer_names[] = {
 //  Trigger: on Key down, or key up
 //  Action: keypress (either with exist modifiers, or 'unique')
 //          Layer change (latch, lock, or shift)
+
+// Okay, this is just a way to get the 'default' map, which can then be
+// modified, KLL-style
+#if 0
+const uint32_t kbd[BoardIO::matrix_size] = {
+    {_ESC_, _1_, _2_, _3_, _4_, _5_, _6_, _7_ _8_, _9_, _0_, _MINUS_},
+    {_TAB_, _Q_, _W_, _E_, _R_, _T_, _Y_, _U_, _I_, _O_, _P_, _BSLSH_},
+    {_CAPS_, _A_, _S_, _D_, _F_, _G_, _H_, _J_, _K_, _L_, _SEMI_, _QUOTE_},
+    {_LSHFT_,
+     _Z_,
+     _X_,
+     _C_,
+     _V_,
+     _B_,
+     _N_,
+     _M_,
+     _CMA_,
+     _DOT_,
+     _SLSH_,
+     _RSHFT_} {_LCTL_,
+               _LGUI_,
+               _LALT,
+               _PGUP_,
+               _TLD_,
+               _BKSP_,
+               _SPC_,
+               _EQL_,
+               _UP_,
+               _RALT_,
+               _RGUI_,
+               _RCTL_} {____,
+                        _OBRC_,
+                        _HOME_,
+                        _PGDN_,
+                        _END_,
+                        _DEL_,
+                        _ENT_,
+                        _LEFT_,
+                        _DOWN_,
+                        _RIGHT_,
+                        _CBRC_,
+                        ____}};
+#endif
+// All key maps are against the canonical key's, no remap of a remap
+
+// Actions can be:
+// Send a key up, key down, or key stroke, (or modifier)
+// Cancel other stuff until back to neutral keyboard
+// Layer changes
+// A layer-transition can be:
+// latch (1-shot layer)
+// layer shift
+// push-lock
+// pop-lock
+
+// key(key_id)
+// key_down(key_id)
+// key_up(key_id)
+
+// mod(mod_id)
+// mod_down(mod_id)
+// mod_up(mod_id)
+
+// layer_latch(layer_id)
+// layer_shift(layer_id)
+// layer_push(layer_id)
+// layer_pop()
+// layer_swtich(layer_id)  => layer_pop() + layer_push(layer_id)
+
+// cancel()
+// All these things can be added together into a list
+
+// A 'layer' is really just a collection of re-maps
+// At runtime, a layer also MUST have a parent
+
+// A key can be 'triggered' by:
+// "raw" key (only modifiers are 'layer' mods, no other keys pressed)
+// "clean" key stroke (key-up occurs after key-down, with no keyup/dn between)
+// "modified" key up or down (what it says)
+// raw_trigger
+// clean_trigger
+// down_trigger
+// up_trigger
+
+// What I want:
+// base_layer[_CAPS_] = action(down_trigger, mod_down(_LCTRL_) +
+// layer_push(win_layer)) base_layer[_Q_] = action(raw_trigger, key(_Q_)); <--
+// This is the default base_layer[_TAB_] = actdion(raw_trigger, key(_TAB_));
+// win_layer[_CAPS_] = action(up_trigger, mod_up(_LCTRL_) +
+// layer_pos(win_layer)) win_layer[_Q_] = action(raw_trigger, key(_F4_) +
+// mod(_LALT_)) When caps + Q is held, the signals should be thus:
+// caps down:
+//   ctrl down, layer(win)
+// Q down:
+//   ctrl up, alt + f4 down
+// Q up:
+//   alt + f4 up, ctrl down
+// caps up
+//   ctrl up, layer(base)
+// OR
+// caps down:
+//   ctrl down;
+// Q down:
+//   ctrl up, alt + f4 down
+// caps up:
+//   alt + f4 up, layer(base)
+// Q up
+//   nothing left
 
 const action_t keymap[][BoardIO::matrix_size] = {
     {// LAYER_MAC_BASE (0) // LROW3:RCMD=>MAC_CAP, RROW5:CTRL=>LYR_WIN

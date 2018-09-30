@@ -16,7 +16,7 @@ struct bit_array;
 void dumpVal(unsigned long v, const char* header = nullptr);
 void dumpHex(uint8_t v, const char* header = nullptr);
 void dumpHex(uint16_t v, const char* header = nullptr);
-void dumpHex(unsigned long v, const char* header = nullptr);
+void dumpHex(uint32_t v, const char* header = nullptr);
 void dumpHex(uint64_t v, const char* header = nullptr);
 void dumpHex(bool b, const char* header = nullptr);
 void dumpStr(const char *str);

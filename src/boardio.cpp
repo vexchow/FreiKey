@@ -37,12 +37,12 @@ void BoardIO::Configure() const {
 
 BoardIO::bits BoardIO::Read() const {
   BoardIO::bits switches;
-  for (uint8_t colNum = 0; colNum < numcols; ++colNum) {
+  for (uint8_t colNum = 0; colNum < ncols; ++colNum) {
     prepPinForRead(cols[colNum]);
     delay(1);
-    for (uint8_t rowNum = 0; rowNum < numrows; ++rowNum) {
+    for (uint8_t rowNum = 0; rowNum < nrows; ++rowNum) {
       if (!digitalRead(rows[rowNum])) {
-        switches.set_bit(colNum + rowNum * numcols);
+        switches.set_bit(colNum + rowNum * ncols);
       }
     }
     completePin(cols[colNum]);

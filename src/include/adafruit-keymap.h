@@ -1,8 +1,8 @@
 #if !defined(KEYMAP_H)
 #define KEYMAP_H
 
-#include "keyhelpers.h"
 #include "boardio.h"
+#include "keyhelpers.h"
 
 #if defined(STATUS_DUMP)
 // For the status dumper thingamajig
