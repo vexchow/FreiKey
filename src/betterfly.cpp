@@ -41,20 +41,21 @@ void UpdateDisplay(const BoardIO::bits& bits,
                    bool command) {
   BoardIO::display->clearDisplay();
   drawSwitches(bits, 48, 6); // 37 x 18
-
-  drawSprite(winMode ? 1 : 0, 89, 5); // 21 x 21
-  if (fnMode)
-    drawSprite(3, 112, 5); // 16 x 21
+  drawSprite(SpriteIndex::MODES, 100, 0);
+  drawSprite(winMode ? SpriteIndex::WINDOWS: SpriteIndex::MACOS, 89, 7); // 21 x 21
+  if (true || fnMode)
+    drawSprite(SpriteIndex::FUNCTION, 112, 7); // 16 x 21
 
   // These 4 sprites 'nest' together into a cluster nicely
   if (shift)
-    drawSprite(5, 0, 7);
+    drawSprite(SpriteIndex::SHIFT, 0, 5);
   if (option)
-    drawSprite(7, 11, 2);
+    drawSprite(SpriteIndex::OPTION, 11, 0);
   if (control)
-    drawSprite(6, 13, 21);
+    drawSprite(SpriteIndex::CONTROL, 13, 18);
   if (command)
-    drawSprite(8, 29, 8);
+    drawSprite(SpriteIndex::COMMAND, 29, 6);
+  drawSprite(SpriteIndex::MODS, 12, 27);
   BoardIO::display->display();
 }
 
@@ -64,17 +65,16 @@ extern "C" void setup() {
   // The reset switch on the OLED is pin 12
   BoardIO::display = new Adafruit_SSD1306(12);
   BoardIO::display->begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  BoardIO::display->display();
-  // Blink a bit, just for funsies...
-  pinMode(13, OUTPUT);
-  for (int i = 0; i < 64; i++) {
-    digitalWrite(13, ((i & 7) == 7) ? HIGH : LOW);
-    delay(8);
-  }
+
+  // If you uncomment this line, it will briefly display the AdaFruit logo
+  // BoardIO::display->display(); delay(500);
+
   Betterfly.Configure();
-  UpdateDisplay(bfState.switches, 1, 1, 1, 1, 1, 1);
+  UpdateDisplay(bfState.switches, 0, 0, 0, 0, 0, 0);
   resetTheWorld();
 }
+
+bool shift = false, command = false, option = false, control = false;
 
 extern "C" void loop() {
   uint32_t now = millis();
@@ -92,6 +92,24 @@ extern "C" void loop() {
     scancode_t sc = getNextScanCode(delta, after, pressed);
     action_t action = keymap[0][sc];
     action_t keyCode = getKeystroke(action);
+    switch (keyCode) {
+      case KEY_LEFT_SHIFT:
+      case KEY_RIGHT_SHIFT:
+        shift = pressed;
+        break;
+      case KEY_LEFT_CTRL:
+      case KEY_RIGHT_CTRL:
+        control = pressed;
+        break;
+      case KEY_LEFT_ALT:
+      case KEY_RIGHT_ALT:
+        option = pressed;
+        break;
+      case KEY_LEFT_GUI:
+      case KEY_RIGHT_GUI:
+        command = pressed;
+        break;
+    }
     if (pressed) {
       DBG(dumpHex(keyCode, "Pressing  code #"));
       Keyboard.press(keyCode);
@@ -102,7 +120,7 @@ extern "C" void loop() {
     // preprocessScanCode(sc, pressed, now);
   }
   if (before != after) {
-    UpdateDisplay(after, 1, 1, 1, 1, 1, 1);
+    UpdateDisplay(after, 0, 0, shift, control, option, command);
   }
   // Update the hardware previous state
   bfState = down;

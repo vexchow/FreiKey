@@ -199,6 +199,23 @@ constexpr uint8_t cmdicon[] = {
   B01111100, B00111110, //
   B00111000, B00011100 //
 };
+
+constexpr uint8_t modestxt[] = {
+ B11110001, B00110011, B10011100, //
+ B10101010, B10101010, B00100000, //
+ B10101010, B10101011, B00011000, //
+ B10101010, B10101010, B00000100, //
+ B10001001, B00110011, B10111000 //
+};
+
+constexpr uint8_t modstxt[] = {
+ B11110001, B00110001, B11000000, //
+ B10101010, B10101010, B00000000, //
+ B10101010, B10101001, B10000000, //
+ B10101010, B10101000, B01000000, //
+ B10001001, B00110011, B10000000 //
+};
+
 struct sprite {
   union {
     void (*render)(uint8_t x, uint8_t y);
@@ -230,9 +247,11 @@ sprite sprites[] = {sprite(&apple[0], 16, 21, 1),
                     sprite(&shifticon[0], 16, 16),
                     sprite(&ctrlicon[0], 16, 7),
                     sprite(&opticon[0], 16, 12),
-                    sprite(&cmdicon[0], 16, 16)};
+                    sprite(&cmdicon[0], 16, 16),
+                    sprite(&modestxt[0], 22, 5),
+                    sprite(&modstxt[0], 18, 5)};
 
-void drawSprite(uint8_t lyr, uint8_t x, uint8_t y) {
+void drawSprite(SpriteIndex lyr, uint8_t x, uint8_t y) {
   sprites[lyr % (sizeof(sprites) / sizeof(sprites[0]))].draw(x, y);
 }
 
