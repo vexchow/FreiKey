@@ -46,13 +46,13 @@ void dumpHex(const bit_array<T>& m, const char* header = nullptr) {
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
-extern void digitalWrite(uint32_t dwPin, uint32_t dwVal);
-extern int digitalRead(uint32_t ulPin);
+extern void digitalWrite(uint8_t dwPin, uint8_t dwVal);
+extern uint8_t digitalRead(uint8_t ulPin);
 extern void delay(uint32_t);
 extern void waitForEvent(void);
-extern uint32_t analogRead(uint32_t ulPin);
-extern void analogWrite(uint32_t ulPin, uint32_t value);
-extern void pinMode(uint32_t dwPin, uint32_t dwMode);
+extern int analogRead(uint8_t ulPin);
+extern void analogWrite(uint8_t ulPin, int value);
+extern void pinMode(uint8_t dwPin, uint8_t dwMode);
 struct ble_gap_evt_adv_report_t;
 #endif
 

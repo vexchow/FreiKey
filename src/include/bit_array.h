@@ -34,6 +34,9 @@ struct bit_array {
   bool operator==(const bit_array& m) const {
     return !memcmp(&value[0], &m.value[0], sizeof(value));
   }
+  bool operator!=(const bit_array& m) const {
+    return !!memcmp(&value[0], &m.value[0], sizeof(value));
+  }
 
   bit_array<T> delta(const bit_array& compare) const {
     bit_array<T> v{};

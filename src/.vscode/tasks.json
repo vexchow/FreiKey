@@ -8,10 +8,7 @@
       "type": "shell",
       "command": "make -j",
       "problemMatcher": "$gcc",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
+      "group": "build"
     },
     {
       "label": "Clean",
@@ -25,7 +22,10 @@
       "type": "shell",
       "command": "make -j -f teensy32.mak flash",
       "problemMatcher": "$gcc",
-      "group": "build"
+      "group": {
+        "kind": "build",
+        "isDefault": true
+        }
     },
     {
       "label": "Set to Teensy",

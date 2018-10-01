@@ -83,3 +83,7 @@ uint8_t BoardIO::getBatteryPercent() {
 }
 
 #endif
+
+#if defined(HAS_DISPLAY)
+class Adafruit_SSD1306 *BoardIO::display;
+#endif

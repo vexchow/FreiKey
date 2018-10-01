@@ -5,6 +5,7 @@
 
 #include "boardio.h"
 #include "dbgcfg.h"
+#include "disp_gfx.h"
 #include "globals.h"
 #include "hardware.h"
 #include "helpers.h"
@@ -15,7 +16,6 @@
 
 constexpr BoardIO Betterfly = {{1, 0, 13, 2, 10, 11, 9, 20, 3, 14, 5, 4},
                                {23, 22, 21, 17, 16, 15}};
-Adafruit_SSD1306 display(12); // The reset switch on the OLED is pin 12
 #if (SSD1306_LCDHEIGHT != 32)
 #error "OLED height is wrong: ARGH!"
 #endif
@@ -31,11 +31,40 @@ void resetTheWorld() {
   memset(keyStates, 0xff, sizeof(keyStates));
 }
 
+uint8_t which = 0;
+void UpdateDisplay(const BoardIO::bits& bits,
+                   bool winMode,
+                   bool fnMode,
+                   bool shift,
+                   bool control,
+                   bool option,
+                   bool command) {
+  BoardIO::display->clearDisplay();
+  drawSwitches(bits, 48, 6); // 37 x 18
+
+  drawSprite(winMode ? 1 : 0, 89, 5); // 21 x 21
+  if (fnMode)
+    drawSprite(3, 112, 5); // 16 x 21
+
+  // These 4 sprites 'nest' together into a cluster nicely
+  if (shift)
+    drawSprite(5, 0, 7);
+  if (option)
+    drawSprite(7, 11, 2);
+  if (control)
+    drawSprite(6, 13, 21);
+  if (command)
+    drawSprite(8, 29, 8);
+  BoardIO::display->display();
+}
+
 extern "C" void setup() {
   DBG(Serial.begin(115200));
   DBG(Serial.println("SETUP!"));
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.display();
+  // The reset switch on the OLED is pin 12
+  BoardIO::display = new Adafruit_SSD1306(12);
+  BoardIO::display->begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  BoardIO::display->display();
   // Blink a bit, just for funsies...
   pinMode(13, OUTPUT);
   for (int i = 0; i < 64; i++) {
@@ -43,6 +72,7 @@ extern "C" void setup() {
     delay(8);
   }
   Betterfly.Configure();
+  UpdateDisplay(bfState.switches, 1, 1, 1, 1, 1, 1);
   resetTheWorld();
 }
 
@@ -63,13 +93,16 @@ extern "C" void loop() {
     action_t action = keymap[0][sc];
     action_t keyCode = getKeystroke(action);
     if (pressed) {
-      DBG(dumpHex(keyCode, "Pressing  code  #"));
+      DBG(dumpHex(keyCode, "Pressing  code #"));
       Keyboard.press(keyCode);
     } else {
       DBG(dumpHex(keyCode, "Releasing code #"));
       Keyboard.release(keyCode);
     }
     // preprocessScanCode(sc, pressed, now);
+  }
+  if (before != after) {
+    UpdateDisplay(after, 1, 1, 1, 1, 1, 1);
   }
   // Update the hardware previous state
   bfState = down;

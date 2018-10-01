@@ -17,12 +17,15 @@ class BoardIO {
 
   uint8_t cols[ncols];
   uint8_t rows[nrows];
-  #if defined(HAS_LED)
+#if defined(HAS_LED)
   uint8_t led;
   void setLED(uint32_t brightness) const;
 #endif
 #if defined(HAS_BATTERY)
   static uint8_t getBatteryPercent();
+#endif
+#if defined(HAS_DISPLAY)
+  static class Adafruit_SSD1306 *display;
 #endif
   void Configure() const;
   bits Read() const;

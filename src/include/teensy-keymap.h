@@ -28,45 +28,18 @@ const char* layer_names[] = {
 
 // Okay, this is just a way to get the 'default' map, which can then be
 // modified, KLL-style
-#if 0
-const uint32_t kbd[BoardIO::matrix_size] = {
-    {_ESC_, _1_, _2_, _3_, _4_, _5_, _6_, _7_ _8_, _9_, _0_, _MINUS_},
-    {_TAB_, _Q_, _W_, _E_, _R_, _T_, _Y_, _U_, _I_, _O_, _P_, _BSLSH_},
-    {_CAPS_, _A_, _S_, _D_, _F_, _G_, _H_, _J_, _K_, _L_, _SEMI_, _QUOTE_},
-    {_LSHFT_,
-     _Z_,
-     _X_,
-     _C_,
-     _V_,
-     _B_,
-     _N_,
-     _M_,
-     _CMA_,
-     _DOT_,
-     _SLSH_,
-     _RSHFT_} {_LCTL_,
-               _LGUI_,
-               _LALT,
-               _PGUP_,
-               _TLD_,
-               _BKSP_,
-               _SPC_,
-               _EQL_,
-               _UP_,
-               _RALT_,
-               _RGUI_,
-               _RCTL_} {____,
-                        _OBRC_,
-                        _HOME_,
-                        _PGDN_,
-                        _END_,
-                        _DEL_,
-                        _ENT_,
-                        _LEFT_,
-                        _DOWN_,
-                        _RIGHT_,
-                        _CBRC_,
-                        ____}};
+#if 1
+const uint8_t K_HM = 1, K_PU = 2, K_PD = 3, K_EN = 4, K_BS = 8, K_TB = 9,
+              K_CR = 13, K_LS = 14, K_RS = 15, K_LC = 17, K_RC = 18, K_LA = 19,
+              K_RA = 20, K_UP = 21, K_DN = 22, K_LT = 23, K_RT = 24, K_ES = 27,
+              K_CA = 29, K_LG = 30, K_RG = 31, K_DL = 127;
+const uint8_t kbd[BoardIO::nrows][BoardIO::ncols] = {
+    {K_ES, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-'},
+    {K_TB, 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '\\'},
+    {K_CA, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', '\''},
+    {K_LS, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', K_RS},
+    {K_LC, K_LG, K_LA, K_PU, '`', K_BS, ' ', '=', K_UP, K_RA, K_RG, K_RC},
+    {0, '[', K_HM, K_PD, K_EN, K_DL, K_CR, K_LT, K_DN, K_RT, ']', 0}};
 #endif
 // All key maps are against the canonical key's, no remap of a remap
 
