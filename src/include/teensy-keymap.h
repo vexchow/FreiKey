@@ -27,12 +27,16 @@ const char* layer_names[] = {
 //          Layer change (latch, lock, or shift)
 
 // Okay, this is just a way to get the 'default' map, which can then be
-// modified, KLL-style
+// modified, "KLL-style"
 #if 1
+
+
 const uint8_t K_HM = 1, K_PU = 2, K_PD = 3, K_EN = 4, K_BS = 8, K_TB = 9,
               K_CR = 13, K_LS = 14, K_RS = 15, K_LC = 17, K_RC = 18, K_LA = 19,
               K_RA = 20, K_UP = 21, K_DN = 22, K_LT = 23, K_RT = 24, K_ES = 27,
-              K_CA = 29, K_LG = 30, K_RG = 31, K_DL = 127;
+              K_CA = 29, K_LG = 30, K_RG = 31, K_DL = 127, K_1='1', K_2='2',
+              K_3='3', K_4='4', K_5='5', K_6='6', K_7='7', K_8='8', K_9='9',
+              K_0='0', K_MN='-', K_Q='Q', K_W='W', K_E='E', K_R='R', K_T='T';
 const uint8_t kbd[BoardIO::nrows][BoardIO::ncols] = {
     {K_ES, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-'},
     {K_TB, 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '\\'},
@@ -40,8 +44,6 @@ const uint8_t kbd[BoardIO::nrows][BoardIO::ncols] = {
     {K_LS, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', K_RS},
     {K_LC, K_LG, K_LA, K_PU, '`', K_BS, ' ', '=', K_UP, K_RA, K_RG, K_RC},
     {0, '[', K_HM, K_PD, K_EN, K_DL, K_CR, K_LT, K_DN, K_RT, ']', 0}};
-#endif
-// All key maps are against the canonical key's, no remap of a remap
 
 // Actions can be:
 // Send a key up, key down, or key stroke, (or modifier)
@@ -107,6 +109,7 @@ const uint8_t kbd[BoardIO::nrows][BoardIO::ncols] = {
 // Q up
 //   nothing left
 
+// PAUSE is Brightness up, SCROLL_LOCK is Brightness down
 const action_t keymap[][BoardIO::matrix_size] = {
     {// LAYER_MAC_BASE (0) // LROW3:RCMD=>MAC_CAP, RROW5:CTRL=>LYR_WIN
      LROW1(KEY(ESCAPE), KEY(1), KEY(2), KEY(3), KEY(4), KEY(5)),
@@ -117,9 +120,9 @@ const action_t keymap[][BoardIO::matrix_size] = {
      RROW3(KEY(H), KEY(J), KEY(K), KEY(L), SEMI_, QUOTE_),
      LROW4(LSHFT, KEY(Z), KEY(X), KEY(C), KEY(V), KEY(B)),
      RROW4(KEY(N), KEY(M), COMMA_, DOT_, KEY(SLASH), RSHFT),
-     LROW5(LCTL, LOPT, LCMD, KEY(PGUP), KEY(GRAVE), KEY(BKSP)),
+     LROW5(LCTL, LOPT, LCMD, KEY(PAUSE), KEY(GRAVE), KEY(BKSP)),
      RROW5(SPACE_, EQ_, UP_, KEY(OBRC), RCTL, KEY(CBRC)),
-     LROW6(PLAY_, KEY(HOME), KEY(PGDN), KEY(END), KEY(DEL)),
+     LROW6(PLAY_, KEY(HOME), KEY(SCROLL_LOCK), KEY(END), KEY(DEL)),
      RROW6(ENTER_, LEFT_, DOWN_, RIGHT_, ROPT)},
 
     {// LAYER_WIN_BASE (1)
