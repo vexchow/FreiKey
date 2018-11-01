@@ -2,12 +2,13 @@
 #define STATE_HARDWARE_H
 
 #include "sysstuff.h"
+#include <limits>
 
 #include "boardio.h"
 #include "dbgcfg.h"
 
-using scancode_t = uint16_t;
-constexpr scancode_t null_scan_code = 0xffff;
+using scancode_t = int16_t;
+constexpr scancode_t null_scan_code = std::numeric_limits<int16_t>::min();
 
 #if defined(ADAFRUIT)
 constexpr char* MANUFACTURER = "FreikyStuff";

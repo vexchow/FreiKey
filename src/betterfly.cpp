@@ -40,23 +40,26 @@ void UpdateDisplay(const BoardIO::bits& bits,
                    bool option,
                    bool command) {
   BoardIO::display->clearDisplay();
-  //drawSwitches(bits, 48, 6); // 37 x 18
+  // drawSwitches(bits, 48, 6); // 37 x 18
   drawSprite(SpriteIndex::LOGO, 48, 0);
   drawSprite(SpriteIndex::MODES, 95, 0);
-  drawSprite(winMode ? SpriteIndex::WINDOWS: SpriteIndex::MACOS, 89, 9); // 21 x 21
+  drawSprite(
+      winMode ? SpriteIndex::WINDOWS : SpriteIndex::MACOS, 89, 9); // 21 x 21
   if (true || fnMode)
     drawSprite(SpriteIndex::FUNCTION, 112, 9); // 16 x 21
 
   // These 4 sprites 'nest' together into a cluster nicely
-  if (shift)
-    drawSprite(SpriteIndex::SHIFT, 0, 6);
-  if (option)
-    drawSprite(SpriteIndex::OPTION, 11, 0);
-  if (control)
-    drawSprite(SpriteIndex::CONTROL, 15, 18);
-  if (command)
-    drawSprite(SpriteIndex::COMMAND, 29, 6);
-  drawSprite(SpriteIndex::MODS, 9, 27);
+  if (shift || option || control || command) {
+    if (shift)
+      drawSprite(SpriteIndex::SHIFT, 0, 6);
+    if (option)
+      drawSprite(SpriteIndex::OPTION, 11, 0);
+    if (control)
+      drawSprite(SpriteIndex::CONTROL, 15, 18);
+    if (command)
+      drawSprite(SpriteIndex::COMMAND, 29, 6);
+    drawSprite(SpriteIndex::MODS, 9, 27);
+  }
   BoardIO::display->display();
 }
 
