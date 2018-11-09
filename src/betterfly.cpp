@@ -44,8 +44,8 @@ void UpdateDisplay(const BoardIO::bits& bits,
   drawSprite(SpriteIndex::LOGO, 48, 0);
   drawSprite(SpriteIndex::MODES, 95, 0);
   drawSprite(
-      winMode ? SpriteIndex::WINDOWS : SpriteIndex::MACOS, 89, 9); // 21 x 21
-  if (true || fnMode)
+      winMode ? SpriteIndex::WINDOWS : SpriteIndex::MACOS, 101 - fnMode * 12, 9); // 21 x 21
+  if (fnMode)
     drawSprite(SpriteIndex::FUNCTION, 112, 9); // 16 x 21
 
   // These 4 sprites 'nest' together into a cluster nicely

@@ -4,6 +4,7 @@
 #include "boardio.h"
 #include "dbgcfg.h"
 
+#if defined(HAS_BATTERY)
 // Some globals used by each half
 // The last time we reported the battery
 uint32_t last_bat_time = 0;
@@ -35,3 +36,5 @@ uint8_t readBattery(uint32_t now, uint8_t prev) {
     total += last_8_reads[i];
   return total / bounds;
 }
+
+#endif
